@@ -22,6 +22,8 @@ object DatastoreKeys {
     val SHOW_COMPLETED_TASKS = booleanPreferencesKey("show_completed_tasks")
     val SHOW_TIMELINE = booleanPreferencesKey("show_timeline")
     val SHOW_SUB_PAGES = booleanPreferencesKey("show_sub_pages")
+    val SHOW_SUB_PAGES = booleanPreferencesKey("show_sub_pages")
+    val LANGUAGE = intPreferencesKey("language")
 }
 
 class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
@@ -105,6 +107,16 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun setShowSubPages(show: Boolean) {
         dataStore.edit { settings ->
             settings[DatastoreKeys.SHOW_SUB_PAGES] = show
+        }
+    }
+
+        val language: Flow<Int> = dataStore.data.map { preferences ->
+        preferences[DatastoreKeys.LANGUAGE] ?: AppLanguage.ENGLISH.ordinal
+    }
+
+    suspend fun saveLanguage(language: Int) {
+        dataStore.edit { settings ->
+            settings[DatastoreKeys.LANGUAGE] = language
         }
     }
 }

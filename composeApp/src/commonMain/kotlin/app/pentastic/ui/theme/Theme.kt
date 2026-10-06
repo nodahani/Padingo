@@ -10,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.platform.LocalLayoutDirection
+import app.pentastic.data.AppLanguage
 import app.pentastic.data.ThemeMode
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -106,6 +109,7 @@ fun isDayNightDark(): Boolean {
 @Composable
 fun AppTheme(
     themeMode: ThemeMode = ThemeMode.DAY_NIGHT,
+    language: AppLanguage = AppLanguage.ENGLISH,
     content: @Composable () -> Unit,
 ) {
     val darkTheme = when (themeMode) {
@@ -120,9 +124,14 @@ fun AppTheme(
     // Update system bar style based on theme
     SystemBarEffect(isDarkTheme = darkTheme)
 
-    CompositionLocalProvider(LocalAppColors provides colors) {
+    val layoutDirection = if (language.isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+
+    CompositionLocalProvider(
+        LocalAppColors provides colors,
+        LocalLayoutDirection provides layoutDirection,
+    ) {
         MaterialTheme(
-            typography = appTypography(isFarsi = false),
+            typography = appTypography(isFarsi = language == AppLanguage.FARSI),
            ) {
             content()
         }
