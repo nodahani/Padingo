@@ -5,27 +5,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.Font
-import pentastic.composeapp.generated.resources.Inter_Black
-import pentastic.composeapp.generated.resources.Inter_Bold
-import pentastic.composeapp.generated.resources.Inter_Light
-import pentastic.composeapp.generated.resources.Inter_Medium
-import pentastic.composeapp.generated.resources.Inter_Regular
-import pentastic.composeapp.generated.resources.Inter_SemiBold
-import pentastic.composeapp.generated.resources.Inter_Thin
-import pentastic.composeapp.generated.resources.Merriweather_Bold
-import pentastic.composeapp.generated.resources.Merriweather_Light
-import pentastic.composeapp.generated.resources.Merriweather_Medium
-import pentastic.composeapp.generated.resources.Merriweather_Regular
 import pentastic.composeapp.generated.resources.Res
-
-@Composable
-private fun merriweatherFontFamily() = FontFamily(
-    Font(Res.font.Merriweather_Light, weight = FontWeight.Light),
-    Font(Res.font.Merriweather_Regular, weight = FontWeight.Normal),
-    Font(Res.font.Merriweather_Medium, weight = FontWeight.Medium),
-    Font(Res.font.Merriweather_Bold, weight = FontWeight.Bold),
-)
-
+import pentastic.composeapp.generated.resources.Inter_Thin
+import pentastic.composeapp.generated.resources.Inter_Light
+import pentastic.composeapp.generated.resources.Inter_Regular
+import pentastic.composeapp.generated.resources.Inter_Medium
+import pentastic.composeapp.generated.resources.Inter_SemiBold
+import pentastic.composeapp.generated.resources.Inter_Bold
+import pentastic.composeapp.generated.resources.Inter_Black
+import pentastic.composeapp.generated.resources.Vazirmatn_Thin
+import pentastic.composeapp.generated.resources.Vazirmatn_Light
+import pentastic.composeapp.generated.resources.Vazirmatn_Regular
+import pentastic.composeapp.generated.resources.Vazirmatn_Medium
+import pentastic.composeapp.generated.resources.Vazirmatn_SemiBold
+import pentastic.composeapp.generated.resources.Vazirmatn_Bold
+import pentastic.composeapp.generated.resources.Vazirmatn_Black
 
 @Composable
 private fun interFontFamily() = FontFamily(
@@ -39,9 +33,20 @@ private fun interFontFamily() = FontFamily(
 )
 
 @Composable
-fun interTypography() = Typography().run {
+private fun vazirmatnFontFamily() = FontFamily(
+    Font(Res.font.Vazirmatn_Thin, weight = FontWeight.Thin),
+    Font(Res.font.Vazirmatn_Light, weight = FontWeight.Light),
+    Font(Res.font.Vazirmatn_Regular, weight = FontWeight.Normal),
+    Font(Res.font.Vazirmatn_Medium, weight = FontWeight.Medium),
+    Font(Res.font.Vazirmatn_SemiBold, weight = FontWeight.SemiBold),
+    Font(Res.font.Vazirmatn_Bold, weight = FontWeight.Bold),
+    Font(Res.font.Vazirmatn_Black, weight = FontWeight.Black)
+)
 
-    val fontFamily = interFontFamily()
+@Composable
+fun appTypography(isFarsi: Boolean) = Typography().run {
+
+    val fontFamily = if (isFarsi) vazirmatnFontFamily() else interFontFamily()
     copy(
         displayLarge = displayLarge.copy(fontFamily = fontFamily),
         displayMedium = displayMedium.copy(fontFamily = fontFamily),

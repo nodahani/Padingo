@@ -122,8 +122,8 @@ fun AppTheme(
 
     CompositionLocalProvider(LocalAppColors provides colors) {
         MaterialTheme(
-            typography = interTypography(),
-        ) {
+            typography = appTypography(isFarsi = false),
+           ) {
             content()
         }
     }
