@@ -9,6 +9,7 @@ import app.pentastic.data.Page
 import app.pentastic.data.PageType
 import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.ThemeMode
+import app.pentastic.data.AppLanguage
 import app.pentastic.notification.ReminderScheduler
 import app.pentastic.notification.nextFutureReminderTime
 import app.pentastic.utils.hasBeenHours
@@ -40,6 +41,9 @@ class MainViewModel(
 
     private val _themeMode = MutableStateFlow(ThemeMode.DAY_NIGHT)
     val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
+
+    private val _language = MutableStateFlow(AppLanguage.ENGLISH)
+    val language: StateFlow<AppLanguage> = _language.asStateFlow()
 
     private val _notesByPage = MutableStateFlow<Map<Long, List<Note>>>(emptyMap())
     val notesByPage: StateFlow<Map<Long, List<Note>>> = _notesByPage.asStateFlow()
@@ -101,6 +105,7 @@ class MainViewModel(
         loadSubPages()
         checkForRateButton()
         loadThemeMode()
+        loadLanguage()
         loadShowCompletedTasks()
         loadShowTimeline()
         loadShowSubPages()
@@ -521,6 +526,21 @@ class MainViewModel(
         viewModelScope.launch {
             _themeMode.value = themeMode
             dataStoreRepository.saveThemeMode(themeMode.ordinal)
+        }
+    }
+
+        private fun loadLanguage() {
+        viewModelScope.launch {
+            dataStoreRepository.language.collect { ordinal ->
+                _language.value = AppLanguage.fromOrdinal(ordinal)
+            }
+        }
+    }
+
+    fun setLanguage(language: AppLanguage) {
+        viewModelScope.launch {
+            _language.value = language
+            dataStoreRepository.saveLanguage(language.ordinal)
         }
     }
 

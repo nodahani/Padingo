@@ -92,6 +92,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.data.Page
+import app.pentastic.data.AppLanguage
 import app.pentastic.data.PageType
 import app.pentastic.data.ThemeMode
 import app.pentastic.ui.theme.AppTheme
@@ -1141,6 +1142,62 @@ fun ThemeSelectionDialog(
                     }
                     Button(
                         onClick = { onConfirm(selectedTheme) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.primaryText,
+                            contentColor = colors.menuBackground
+                        )
+                    ) {
+                        Text("Save")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LanguageSelectionDialog(
+    currentLanguage: AppLanguage,
+    onDismiss: () -> Unit,
+    onConfirm: (AppLanguage) -> Unit,
+) {
+    var selectedLanguage by remember { mutableStateOf(currentLanguage) }
+    val colors = colors
+
+    BasicAlertDialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = colors.menuBackground,
+            shadowElevation = 8.dp,
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text("Language", color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
+                Spacer(Modifier.height(16.dp))
+                AppLanguage.entries.forEach { language ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { selectedLanguage = language }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        RadioButton(
+                            selected = selectedLanguage == language,
+                            onClick = { selectedLanguage = language },
+                            colors = appRadioButtonColors(),
+                        )
+                        Text(text = language.label, color = colors.primaryText)
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel", color = colors.primaryText)
+                    }
+                    Button(
+                        onClick = { onConfirm(selectedLanguage) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors.primaryText,
                             contentColor = colors.menuBackground

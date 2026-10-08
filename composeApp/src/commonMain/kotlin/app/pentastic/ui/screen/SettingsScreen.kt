@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Share
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.ui.composables.ThemeSelectionDialog
+import app.pentastic.ui.composables.LanguageSelectionDialog
 import app.pentastic.ui.theme.AppTheme
 import app.pentastic.ui.theme.AppTheme.colors
 import app.pentastic.ui.theme.captionBarHeight
@@ -61,6 +63,9 @@ fun SettingsScreen(
 
     val themeMode by viewModel.themeMode.collectAsState()
     var showThemeDialog by remember { mutableStateOf(false) }
+
+    val language by viewModel.language.collectAsState()
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -90,6 +95,19 @@ fun SettingsScreen(
             trailing = {
                 Text(
                     text = themeMode.label,
+                    fontSize = 14.sp,
+                    color = colors.hint,
+                )
+            }
+        )
+
+        SettingsItem(
+            icon = { Icon(Icons.Default.Language, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
+            title = "Language",
+            onClick = { showLanguageDialog = true },
+            trailing = {
+                Text(
+                    text = language.label,
                     fontSize = 14.sp,
                     color = colors.hint,
                 )
@@ -149,7 +167,19 @@ fun SettingsScreen(
             }
         )
     }
+
+        if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            currentLanguage = viewModel.language.value,
+            onDismiss = { showLanguageDialog = false },
+            onConfirm = { selectedLanguage ->
+                viewModel.setLanguage(selectedLanguage)
+                showLanguageDialog = false
+            }
+        )
+    }
 }
+
 
 @Composable
 private fun SettingsItem(
