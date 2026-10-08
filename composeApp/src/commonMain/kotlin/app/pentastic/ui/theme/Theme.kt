@@ -14,10 +14,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.platform.LocalLayoutDirection
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.ThemeMode
+import app.pentastic.ui.strings.AppStrings
+import app.pentastic.ui.strings.LocalStrings
+import app.pentastic.ui.strings.stringsFor
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+
 
 data class AppColors(
     val background: Color,
@@ -68,6 +72,10 @@ object AppTheme {
     val colors: AppColors
         @Composable
         get() = LocalAppColors.current
+
+    val strings: AppStrings
+        @Composable
+        get() = LocalStrings.current
 }
 
 /**
@@ -129,6 +137,7 @@ fun AppTheme(
     CompositionLocalProvider(
         LocalAppColors provides colors,
         LocalLayoutDirection provides layoutDirection,
+        LocalStrings provides stringsFor(language),
     ) {
         MaterialTheme(
             typography = appTypography(isFarsi = language == AppLanguage.FARSI),

@@ -1108,6 +1108,7 @@ fun ThemeSelectionDialog(
 ) {
     var selectedTheme by remember { mutableStateOf(currentTheme) }
     val colors = colors
+    val strings = AppTheme.strings
 
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -1116,7 +1117,7 @@ fun ThemeSelectionDialog(
             shadowElevation = 8.dp,
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Theme", color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
+                Text(strings.theme, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
                 Spacer(Modifier.height(16.dp))
                 ThemeMode.entries.forEach { theme ->
                     Row(
@@ -1132,7 +1133,7 @@ fun ThemeSelectionDialog(
                             onClick = { selectedTheme = theme },
                             colors = appRadioButtonColors(),
                         )
-                        Text(text = theme.label, color = colors.primaryText)
+                        Text(text = strings.themeLabel(theme), color = colors.primaryText)
                     }
                 }
                 Spacer(Modifier.height(16.dp))
@@ -1164,6 +1165,7 @@ fun LanguageSelectionDialog(
 ) {
     var selectedLanguage by remember { mutableStateOf(currentLanguage) }
     val colors = colors
+    val strings = AppTheme.strings
 
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -1172,7 +1174,7 @@ fun LanguageSelectionDialog(
             shadowElevation = 8.dp,
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Language", color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
+                Text(strings.language, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
                 Spacer(Modifier.height(16.dp))
                 AppLanguage.entries.forEach { language ->
                     Row(
@@ -1194,7 +1196,7 @@ fun LanguageSelectionDialog(
                 Spacer(Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", color = colors.primaryText)
+                        Text(strings.cancel, color = colors.primaryText)
                     }
                     Button(
                         onClick = { onConfirm(selectedLanguage) },
@@ -1203,7 +1205,7 @@ fun LanguageSelectionDialog(
                             contentColor = colors.menuBackground
                         )
                     ) {
-                        Text("Save")
+                        Text(strings.save)
                     }
                 }
             }

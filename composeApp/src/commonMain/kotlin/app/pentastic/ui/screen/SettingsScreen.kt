@@ -60,6 +60,7 @@ fun SettingsScreen(
     val uriHandler = LocalUriHandler.current
     val clipboardManager = LocalClipboardManager.current
     val coroutineScope = rememberCoroutineScope()
+    val strings = AppTheme.strings
 
     val themeMode by viewModel.themeMode.collectAsState()
     var showThemeDialog by remember { mutableStateOf(false) }
@@ -77,7 +78,7 @@ fun SettingsScreen(
     ) {
         // Title
         Text(
-            text = "Settings",
+            text = strings.settings,
             style = TextStyle(
                 color = colors.pageTitle,
                 fontSize = 36.sp,
@@ -90,11 +91,11 @@ fun SettingsScreen(
 
         SettingsItem(
             icon = { Icon(Icons.Default.Palette, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
-            title = "Theme",
+            title = strings.theme,
             onClick = { showThemeDialog = true },
             trailing = {
                 Text(
-                    text = themeMode.label,
+                    text = strings.themeLabel(themeMode),
                     fontSize = 14.sp,
                     color = colors.hint,
                 )
@@ -103,7 +104,7 @@ fun SettingsScreen(
 
         SettingsItem(
             icon = { Icon(Icons.Default.Language, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
-            title = "Language",
+            title = strings.language,
             onClick = { showLanguageDialog = true },
             trailing = {
                 Text(
@@ -116,7 +117,7 @@ fun SettingsScreen(
 
         SettingsItem(
             icon = { Icon(Icons.Default.Delete, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
-            title = "Trash",
+            title = strings.trash,
             onClick = onNavigateToTrash,
             trailing = {
                 Icon(
@@ -132,23 +133,23 @@ fun SettingsScreen(
 
         SettingsItem(
             icon = { Icon(Icons.Default.PersonAdd, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
-            title = "Follow",
+            title = strings.follow,
             onClick = {
                 uriHandler.openUri("https://x.com/tanujnotes")
             }
         )
         SettingsItem(
             icon = { Icon(Icons.Default.Share, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
-            title = "Share",
+            title = strings.share,
             onClick = {
                 coroutineScope.launch {
-                    clipboardManager.setText(AnnotatedString("Get things done with Pentastic!\nhttps://play.google.com/store/apps/details?id=app.pentastic"))
+                    clipboardManager.setText(AnnotatedString(strings.shareText))
                 }
             }
         )
         SettingsItem(
             icon = { Icon(Icons.Default.Star, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
-            title = "Rate",
+            title = strings.rate,
             onClick = {
                 viewModel.onRateClicked()
                 uriHandler.openUri("https://play.google.com/store/apps/details?id=app.pentastic")
