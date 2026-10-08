@@ -22,7 +22,6 @@ object DatastoreKeys {
     val SHOW_COMPLETED_TASKS = booleanPreferencesKey("show_completed_tasks")
     val SHOW_TIMELINE = booleanPreferencesKey("show_timeline")
     val SHOW_SUB_PAGES = booleanPreferencesKey("show_sub_pages")
-    val SHOW_SUB_PAGES = booleanPreferencesKey("show_sub_pages")
     val LANGUAGE = intPreferencesKey("language")
 }
 
