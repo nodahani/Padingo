@@ -66,6 +66,7 @@ internal fun DueDateOptionsDialog(
     showClear: Boolean = true,
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     val timeZone = TimeZone.currentSystemDefault()
     val today = remember { Clock.System.now().toLocalDateTime(timeZone).date }
     val hasDueDate = currentDueStartAt != 0L
@@ -138,7 +139,7 @@ internal fun DueDateOptionsDialog(
             Column(modifier = Modifier.padding(24.dp)) {
                 when (page) {
                     DueDatePage.OPTIONS -> {
-                        Text("Due date", color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
+                        Text(strings.dueDate, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
                         Spacer(Modifier.height(16.dp))
 
                         // 2 column grid of radio options
@@ -303,7 +304,7 @@ internal fun DueDateOptionsDialog(
                     ) {
                         if (canClear) {
                             TextButton(onClick = { onApply(0L, 0L) }) {
-                                Text("Clear", color = colors.primaryText.copy(alpha = 0.6f))
+                                Text(strings.clear, color = colors.primaryText.copy(alpha = 0.6f))
                             }
                         } else {
                             Spacer(Modifier.width(1.dp))
@@ -312,7 +313,7 @@ internal fun DueDateOptionsDialog(
                         if (needsConfirm) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 TextButton(onClick = onDismiss) {
-                                    Text("Cancel", color = colors.primaryText)
+                                    Text(strings.cancel, color = colors.primaryText)
                                 }
                                 Button(
                                     onClick = {
@@ -337,7 +338,7 @@ internal fun DueDateOptionsDialog(
                                         contentColor = colors.menuBackground
                                     )
                                 ) {
-                                    Text("Save")
+                                    Text(strings.save)
                                 }
                             }
                         }
@@ -356,7 +357,7 @@ internal fun DueDateOptionsDialog(
                 selectedOption = DueDateOption.CUSTOM
                 onApply(date.toDueValue(), date.toDueValue())
             },
-            title = "Select date",
+            title = strings.selectDate,
         )
     }
 }
@@ -364,10 +365,11 @@ internal fun DueDateOptionsDialog(
 @Composable
 private fun DrillPageHeader(title: String, onBack: () -> Unit) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Back",
+            contentDescription = strings.back,
             tint = colors.primaryText,
             modifier = Modifier
                 .size(20.dp)

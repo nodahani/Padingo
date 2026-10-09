@@ -86,6 +86,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun TimelinePage(modifier: Modifier = Modifier) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     val viewModel = koinViewModel<MainViewModel>()
     val notesByPage by viewModel.notesByPage.collectAsState()
     val pages by viewModel.pages.collectAsState()
@@ -210,7 +211,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                     add(
                         TimelineSectionUi(
                             key = "REPEATING",
-                            label = "Repeating",
+                            label = strings.timelineRepeating,
                             notes = repeating,
                             collapsedByDefault = true,
                         )
@@ -225,7 +226,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                     add(
                         TimelineSectionUi(
                             key = "UNSCHEDULED",
-                            label = "Unscheduled",
+                            label = strings.timelineUnscheduled,
                             notes = unscheduled,
                             collapsedByDefault = true,
                         )
@@ -254,7 +255,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                     add(
                         TimelineSectionUi(
                             key = "COMPLETED",
-                            label = "Completed",
+                            label = strings.timelineCompleted,
                             notes = completed,
                             collapsedByDefault = true,
                             isDimmed = true,
@@ -625,6 +626,7 @@ private data class TimelineSectionUi(
 @Composable
 private fun TimelineEmptyState(today: LocalDate) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -649,7 +651,7 @@ private fun TimelineEmptyState(today: LocalDate) {
         )
     }
     Text(
-        text = "Nothing scheduled yet.\n\nAdd a task below, or open any task's menu and set a due date — it will show up here.",
+        text = strings.timelineEmpty,
         color = colors.hint,
         fontSize = 15.sp,
         lineHeight = 22.sp,
@@ -803,6 +805,7 @@ private fun TimelineNoteRow(
     dragHandleModifier: Modifier = Modifier,
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     var showMenu by remember { mutableStateOf(false) }
     // A truncated row takes two taps: the first reveals the rest of the text, the
     // second opens the menu. Untruncated rows open the menu on the first tap.
@@ -859,7 +862,7 @@ private fun TimelineNoteRow(
             if (note.repeatFrequency > 0) {
                 Icon(
                     imageVector = Icons.Filled.Repeat,
-                    contentDescription = "Repeating task",
+                    contentDescription = strings.repeatingTask,
                     modifier = Modifier.padding(top = 7.dp, end = 8.dp).size(16.dp),
                     tint = colors.primaryText.copy(alpha = if (isDimmed) 0.33f else 0.4f)
                 )

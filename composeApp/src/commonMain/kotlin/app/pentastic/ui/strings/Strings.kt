@@ -87,6 +87,21 @@ interface AppStrings {
     val clear: String
     val selectStartDate: String
 
+    // Timeline, Reminder, Due date
+    val timelineRepeating: String
+    val timelineUnscheduled: String
+    val timelineCompleted: String
+    val timelineEmpty: String
+    val setReminder: String
+    val changeDateTime: String
+    val enabled: String
+    val remove: String
+    val selectDate: String
+    val back: String
+    val permissionRequired: String
+    val permissionMessage: String
+    val continueLabel: String
+
     // Functions
     fun themeLabel(mode: ThemeMode): String
     fun archiveCount(count: Int): String
@@ -178,6 +193,23 @@ object EnglishStrings : AppStrings {
     override val remindMe = "Remind me"
     override val clear = "Clear"
     override val selectStartDate = "Select start date"
+
+    // Timeline, Reminder, Due date
+    override val timelineRepeating = "Repeating"
+    override val timelineUnscheduled = "Unscheduled"
+    override val timelineCompleted = "Completed"
+    override val timelineEmpty =
+        "Nothing scheduled yet.\n\nAdd a task below, or open any task's menu and set a due date — it will show up here."
+    override val setReminder = "Set Reminder"
+    override val changeDateTime = "Change date & time"
+    override val enabled = "Enabled"
+    override val remove = "Remove"
+    override val selectDate = "Select date"
+    override val back = "Back"
+    override val permissionRequired = "Permission required"
+    override val permissionMessage =
+        "To set reminders, we need permission to send notifications and schedule alarms."
+    override val continueLabel = "Continue"
 
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
@@ -280,6 +312,23 @@ object FarsiStrings : AppStrings {
     override val remindMe = "یادآوری کن"
     override val clear = "پاک کردن"
     override val selectStartDate = "انتخاب تاریخ شروع"
+
+    // Timeline, Reminder, Due date
+    override val timelineRepeating = "تکرارشونده"
+    override val timelineUnscheduled = "بدون برنامه"
+    override val timelineCompleted = "انجام‌شده"
+    override val timelineEmpty =
+        "هنوز چیزی برنامه‌ریزی نشده.\n\nپایین یک کار اضافه کن، یا منوی هر کار را باز کن و تاریخ سررسید بگذار؛ اینجا نمایش داده می‌شود."
+    override val setReminder = "تنظیم یادآور"
+    override val changeDateTime = "تغییر تاریخ و زمان"
+    override val enabled = "فعال"
+    override val remove = "برداشتن"
+    override val selectDate = "انتخاب تاریخ"
+    override val back = "بازگشت"
+    override val permissionRequired = "نیاز به دسترسی"
+    override val permissionMessage =
+        "برای تنظیم یادآور، به اجازه‌ی ارسال اعلان و زمان‌بندی هشدار نیاز داریم."
+    override val continueLabel = "ادامه"
 
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {

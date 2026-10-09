@@ -48,6 +48,7 @@ fun ReminderDialog(
     onRemoveReminder: () -> Unit,
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     val timeZone = TimeZone.currentSystemDefault()
     val now = Clock.System.now()
 
@@ -82,7 +83,7 @@ fun ReminderDialog(
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    "Set Reminder",
+                    strings.setReminder,
                     color = colors.primaryText,
                     fontWeight = FontWeight.Medium,
                     fontSize = 24.sp
@@ -116,7 +117,7 @@ fun ReminderDialog(
                     onClick = { showDateTimePicker = true },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Change date & time", color = colors.primaryText)
+                    Text(strings.changeDateTime, color = colors.primaryText)
                 }
 
                 // Enable/Disable toggle (only shown if reminder already exists)
@@ -129,7 +130,7 @@ fun ReminderDialog(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Enabled", color = colors.primaryText)
+                        Text(strings.enabled, color = colors.primaryText)
                         Switch(
                             checked = isEnabled,
                             onCheckedChange = { isEnabled = it },
@@ -150,7 +151,7 @@ fun ReminderDialog(
                             onRemoveReminder()
                             onDismiss()
                         }) {
-                            Text("Remove", color = colors.primaryText.copy(alpha = 0.6f))
+                            Text(strings.remove, color = colors.primaryText.copy(alpha = 0.6f))
                         }
                     } else {
                         Spacer(Modifier.width(1.dp))
@@ -158,13 +159,13 @@ fun ReminderDialog(
 
                     Row {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = colors.primaryText)
+                            Text(strings.cancel, color = colors.primaryText)
                         }
                         TextButton(onClick = {
                             val reminderTime = calculateReminderTime()
                             onConfirm(reminderTime, isEnabled)
                         }) {
-                            Text("Save", color = colors.primaryText)
+                            Text(strings.save, color = colors.primaryText)
                         }
                     }
                 }
