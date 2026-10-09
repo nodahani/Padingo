@@ -51,6 +51,7 @@ import kotlin.time.ExperimentalTime
 
 @Composable
 fun ArchiveScreen(onNavigateBack: () -> Unit) {
+    val strings = AppTheme.strings
     val viewModel = koinViewModel<MainViewModel>()
     val archivedPages by viewModel.archivedPages.collectAsState()
 
@@ -66,7 +67,7 @@ fun ArchiveScreen(onNavigateBack: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Archive",
+                text = strings.archive,
                 style = TextStyle(
                     color = colors.pageTitle,
                     fontSize = 36.sp,
@@ -83,7 +84,7 @@ fun ArchiveScreen(onNavigateBack: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Archive is empty",
+                    text = strings.archiveEmpty,
                     color = colors.hint,
                     fontSize = 16.sp,
                 )
@@ -108,6 +109,7 @@ private fun ArchivePageItem(
     onUnarchive: () -> Unit,
     onMoveToTrash: () -> Unit,
 ) {
+    val strings = AppTheme.strings
     var showMenu by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -143,11 +145,11 @@ private fun ArchivePageItem(
                 Icon(
                     modifier = Modifier.size(20.dp),
                     imageVector = Icons.Default.Unarchive,
-                    contentDescription = "Unarchive",
+                    contentDescription = strings.unarchive,
                     tint = colors.primaryText
                 )
                 Text(
-                    text = "Unarchive",
+                    text = strings.unarchive,
                     style = TextStyle(fontSize = 14.sp, color = colors.primaryText),
                 )
             }
@@ -161,11 +163,11 @@ private fun ArchivePageItem(
                 Icon(
                     modifier = Modifier.size(20.dp),
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Move to trash",
+                    contentDescription = strings.moveToTrash,
                     tint = colors.primaryText
                 )
                 Text(
-                    text = "Move to trash",
+                    text = strings.moveToTrash,
                     style = TextStyle(fontSize = 14.sp, color = colors.primaryText),
                 )
             }

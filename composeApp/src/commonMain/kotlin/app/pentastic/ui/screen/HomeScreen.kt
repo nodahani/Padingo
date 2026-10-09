@@ -71,6 +71,7 @@ fun HomeScreen(
     prefs: DataStore<Preferences> = koinInject(),
     dataStoreRepository: DataStoreRepository = koinInject(),
 ) {
+    val strings = AppTheme.strings
     val viewModel = koinViewModel<MainViewModel>()
 
     val pages by viewModel.pages.collectAsState()
@@ -427,9 +428,9 @@ fun HomeScreen(
                                 isEditing = editingNote != null,
                                 placeholder = when {
                                     editingNote != null -> ""
-                                    isOnTimelinePage -> "Add a task..."
-                                    currentActivePage != null && PageType.fromOrdinal(currentActivePage.pageType) == PageType.NOTES -> "Add a note..."
-                                    currentActivePage != null -> "Add a task..."
+                                    isOnTimelinePage -> strings.addTask
+                                    currentActivePage != null && PageType.fromOrdinal(currentActivePage.pageType) == PageType.NOTES -> strings.addNote
+                                    currentActivePage != null -> strings.addTask
                                     else -> ""
                                 },
                                 showPriorityButton = currentActivePage != null && PageType.fromOrdinal(currentActivePage.pageType) == PageType.TASKS,
@@ -573,13 +574,13 @@ fun HomeScreen(
                         isEditing = editingNote != null,
                         placeholder = when {
                             editingNote != null -> ""
-                            isOnTimelinePage -> "Add a task..."
-                            isOnIndexPage -> "Add a new page..."
+                            isOnTimelinePage -> strings.addTask
+                            isOnIndexPage -> strings.addPage
                             else -> {
                                 if (currentActivePage != null && PageType.fromOrdinal(currentActivePage.pageType) == PageType.NOTES)
-                                    "Add a note..."
+                                    strings.addNote
                                 else
-                                    "Add a task..."
+                                    strings.addTask
                             }
                         },
                         showPriorityButton = !isOnIndexPage && currentActivePage != null && PageType.fromOrdinal(currentActivePage.pageType) == PageType.TASKS,

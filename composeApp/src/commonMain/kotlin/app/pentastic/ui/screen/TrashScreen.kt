@@ -61,6 +61,7 @@ import kotlin.time.ExperimentalTime
 
 @Composable
 fun TrashScreen(onNavigateBack: () -> Unit) {
+    val strings = AppTheme.strings
     val viewModel = koinViewModel<MainViewModel>()
     val trashedPages by viewModel.trashedPages.collectAsState()
     val trashedNotes by viewModel.trashedNotes.collectAsState()
@@ -96,7 +97,7 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Trash",
+                    text = strings.trash,
                     style = TextStyle(
                         color = colors.pageTitle,
                         fontSize = 36.sp,
@@ -106,7 +107,7 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
             }
             if (!isEmpty) {
                 Text(
-                    text = "Empty",
+                    text = strings.empty,
                     style = TextStyle(color = colors.pageTitle.copy(alpha = 0.8f), fontWeight = FontWeight.Medium),
                     modifier = Modifier
                         .padding(horizontal = 12.dp, vertical = 16.dp)
@@ -123,7 +124,7 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Trash is empty",
+                    text = strings.trashEmpty,
                     color = colors.hint,
                     fontSize = 16.sp,
                 )
@@ -134,7 +135,7 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
                 if (visibleTrashedPages.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Pages",
+                            text = strings.pages,
                             color = colors.primaryText.copy(alpha = 0.5f),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -155,7 +156,7 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
                 if (visibleTrashedNotes.isNotEmpty()) {
                     item {
                         Text(
-                            text = "Tasks",
+                            text = strings.tasks,
                             color = colors.primaryText.copy(alpha = 0.5f),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -178,9 +179,9 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
     // Empty trash confirmation dialog
     if (showEmptyTrashDialog) {
         ConfirmationDialog(
-            title = "Empty trash",
-            message = "Permanently delete all items in trash? This cannot be undone.",
-            confirmText = "Delete all",
+            title = strings.emptyTrash,
+            message = strings.emptyTrashMessage,
+            confirmText = strings.deleteAll,
             onDismiss = { showEmptyTrashDialog = false },
             onConfirm = {
                 viewModel.emptyTrash()
@@ -192,9 +193,9 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
     // Permanent delete page confirmation
     if (pageToDelete != null) {
         ConfirmationDialog(
-            title = "Delete permanently",
-            message = "Permanently delete page '${pageToDelete!!.name}' and all its notes? This cannot be undone.",
-            confirmText = "Delete",
+            title = strings.deletePermanently,
+            message = strings.deletePageMessage(pageToDelete!!.name),
+            confirmText = strings.delete,
             onDismiss = { pageToDelete = null },
             onConfirm = {
                 viewModel.permanentlyDeletePage(pageToDelete!!)
@@ -206,9 +207,9 @@ fun TrashScreen(onNavigateBack: () -> Unit) {
     // Permanent delete note confirmation
     if (noteToDelete != null) {
         ConfirmationDialog(
-            title = "Delete permanently",
-            message = "Permanently delete this task? This cannot be undone.",
-            confirmText = "Delete",
+            title = strings.deletePermanently,
+            message = strings.deleteTaskMessage,
+            confirmText = strings.delete,
             onDismiss = { noteToDelete = null },
             onConfirm = {
                 viewModel.permanentlyDeleteNote(noteToDelete!!)
@@ -224,6 +225,7 @@ private fun TrashPageItem(
     onRestore: () -> Unit,
     onDelete: () -> Unit,
 ) {
+    val strings = AppTheme.strings
     var showMenu by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -244,7 +246,7 @@ private fun TrashPageItem(
                 )
                 if (page.parentId != null) {
                     Text(
-                        text = "Sub-page",
+                        text = strings.subPage,
                         fontSize = 12.sp,
                         color = colors.hint,
                     )
@@ -302,6 +304,7 @@ private fun TrashActionsMenu(
     onRestore: () -> Unit,
     onDelete: () -> Unit,
 ) {
+    val strings = AppTheme.strings
     DropdownMenu(
         modifier = Modifier.background(color = colors.menuBackground),
         expanded = expanded,
@@ -318,11 +321,11 @@ private fun TrashActionsMenu(
             Icon(
                 modifier = Modifier.size(20.dp),
                 imageVector = Icons.Default.Restore,
-                contentDescription = "Restore",
+                contentDescription = strings.restore,
                 tint = colors.primaryText
             )
             Text(
-                text = "Restore",
+                text = strings.restore,
                 style = TextStyle(fontSize = 14.sp, color = colors.primaryText),
             )
         }
@@ -336,11 +339,11 @@ private fun TrashActionsMenu(
             Icon(
                 modifier = Modifier.size(20.dp),
                 imageVector = Icons.Default.DeleteForever,
-                contentDescription = "Delete",
+                contentDescription = strings.delete,
                 tint = colors.primaryText
             )
             Text(
-                text = "Delete forever",
+                text = strings.deleteForever,
                 style = TextStyle(fontSize = 14.sp, color = colors.primaryText),
             )
         }
@@ -355,6 +358,7 @@ private fun ConfirmationDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
 ) {
+    val strings = AppTheme.strings
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(28.dp),
@@ -368,7 +372,7 @@ private fun ConfirmationDialog(
                 Spacer(Modifier.height(24.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", color = colors.primaryText)
+                        Text(strings.cancel, color = colors.primaryText)
                     }
                     Button(
                         onClick = onConfirm,

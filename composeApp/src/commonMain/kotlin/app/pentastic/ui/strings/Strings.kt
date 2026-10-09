@@ -48,15 +48,36 @@ interface AppStrings {
     val subPageLimitMessage: String
     val ok: String
 
-    fun archiveCount(count: Int): String
+    // Home, Archive, Trash
+    val addTask: String
+    val addNote: String
+    val addPage: String
+    val archiveEmpty: String
+    val empty: String
+    val trashEmpty: String
+    val pages: String
+    val tasks: String
+    val emptyTrash: String
+    val emptyTrashMessage: String
+    val deleteAll: String
+    val deletePermanently: String
+    val deleteTaskMessage: String
+    val subPage: String
+    val restore: String
+    val deleteForever: String
 
+    // Functions
     fun themeLabel(mode: ThemeMode): String
+    fun archiveCount(count: Int): String
+    fun deletePageMessage(pageName: String): String
 }
 
 object EnglishStrings : AppStrings {
+    // Common
     override val cancel = "Cancel"
     override val save = "Save"
 
+    // Settings
     override val settings = "Settings"
     override val theme = "Theme"
     override val language = "Language"
@@ -66,8 +87,9 @@ object EnglishStrings : AppStrings {
     override val rate = "Rate"
     override val shareText =
         "Get things done with Pentastic!\nhttps://play.google.com/store/apps/details?id=app.pentastic"
-    
-        override val index = "Index"
+
+    // Index page
+    override val index = "Index"
     override val reorder = "Reorder"
     override val done = "Done"
     override val options = "Options"
@@ -95,20 +117,44 @@ object EnglishStrings : AppStrings {
     override val subPageLimitMessage = "You can only add 10 sub-pages per page."
     override val ok = "OK"
 
-    override fun archiveCount(count: Int) = "Archive ($count)"
+    // Home, Archive, Trash
+    override val addTask = "Add a task..."
+    override val addNote = "Add a note..."
+    override val addPage = "Add a new page..."
+    override val archiveEmpty = "Archive is empty"
+    override val empty = "Empty"
+    override val trashEmpty = "Trash is empty"
+    override val pages = "Pages"
+    override val tasks = "Tasks"
+    override val emptyTrash = "Empty trash"
+    override val emptyTrashMessage = "Permanently delete all items in trash? This cannot be undone."
+    override val deleteAll = "Delete all"
+    override val deletePermanently = "Delete permanently"
+    override val deleteTaskMessage = "Permanently delete this task? This cannot be undone."
+    override val subPage = "Sub-page"
+    override val restore = "Restore"
+    override val deleteForever = "Delete forever"
 
+    // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
         ThemeMode.LIGHT -> "Light"
         ThemeMode.DARK -> "Dark"
         ThemeMode.SYSTEM -> "System"
         ThemeMode.DAY_NIGHT -> "Day/Night"
     }
+
+    override fun archiveCount(count: Int) = "Archive ($count)"
+
+    override fun deletePageMessage(pageName: String) =
+        "Permanently delete page '$pageName' and all its notes? This cannot be undone."
 }
 
 object FarsiStrings : AppStrings {
+    // Common
     override val cancel = "لغو"
     override val save = "ذخیره"
 
+    // Settings
     override val settings = "تنظیمات"
     override val theme = "پوسته"
     override val language = "زبان"
@@ -119,6 +165,7 @@ object FarsiStrings : AppStrings {
     override val shareText =
         "با Pentastic کارهات رو انجام بده!\nhttps://play.google.com/store/apps/details?id=app.pentastic"
 
+    // Index page
     override val index = "فهرست"
     override val reorder = "مرتب‌سازی"
     override val done = "تمام"
@@ -147,14 +194,36 @@ object FarsiStrings : AppStrings {
     override val subPageLimitMessage = "برای هر صفحه حداکثر ۱۰ زیرصفحه می‌توانید اضافه کنید."
     override val ok = "تأیید"
 
-    override fun archiveCount(count: Int) = "بایگانی ($count)"
-    
+    // Home, Archive, Trash
+    override val addTask = "یک کار اضافه کن..."
+    override val addNote = "یک یادداشت اضافه کن..."
+    override val addPage = "یک صفحه‌ی جدید اضافه کن..."
+    override val archiveEmpty = "بایگانی خالی است"
+    override val empty = "خالی کردن"
+    override val trashEmpty = "سطل زباله خالی است"
+    override val pages = "صفحه‌ها"
+    override val tasks = "کارها"
+    override val emptyTrash = "خالی کردن سطل زباله"
+    override val emptyTrashMessage = "همه‌ی موارد سطل زباله برای همیشه حذف شوند؟ این عمل قابل بازگشت نیست."
+    override val deleteAll = "حذف همه"
+    override val deletePermanently = "حذف دائمی"
+    override val deleteTaskMessage = "این مورد برای همیشه حذف شود؟ این عمل قابل بازگشت نیست."
+    override val subPage = "زیرصفحه"
+    override val restore = "بازیابی"
+    override val deleteForever = "حذف برای همیشه"
+
+    // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
         ThemeMode.LIGHT -> "روشن"
         ThemeMode.DARK -> "تیره"
         ThemeMode.SYSTEM -> "سیستم"
         ThemeMode.DAY_NIGHT -> "روز/شب"
     }
+
+    override fun archiveCount(count: Int) = "بایگانی ($count)"
+
+    override fun deletePageMessage(pageName: String) =
+        "صفحه‌ی «$pageName» و همه‌ی یادداشت‌های آن برای همیشه حذف شود؟ این عمل قابل بازگشت نیست."
 }
 
 fun stringsFor(language: AppLanguage): AppStrings = when (language) {
