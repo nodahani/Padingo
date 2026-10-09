@@ -66,10 +66,33 @@ interface AppStrings {
     val restore: String
     val deleteForever: String
 
+    // Note page
+    val repeatingTask: String
+    val upcomingReminder: String
+    val dueDate: String
+    val moreOptions: String
+    val deleteCompleted: String
+    val markDone: String
+    val markTodo: String
+    val priority: String
+    val copy: String
+    val edit: String
+    val repeatLabel: String
+    val moveTo: String
+    val reminder: String
+    val current: String
+    val repeatTask: String
+    val startFrom: String
+    val remindMe: String
+    val clear: String
+    val selectStartDate: String
+
     // Functions
     fun themeLabel(mode: ThemeMode): String
     fun archiveCount(count: Int): String
     fun deletePageMessage(pageName: String): String
+    fun completedTasks(count: Int): String
+    fun moveCompletedMessage(count: Int): String
 }
 
 object EnglishStrings : AppStrings {
@@ -135,6 +158,27 @@ object EnglishStrings : AppStrings {
     override val restore = "Restore"
     override val deleteForever = "Delete forever"
 
+    // Note page
+    override val repeatingTask = "Repeating task"
+    override val upcomingReminder = "Upcoming reminder"
+    override val dueDate = "Due date"
+    override val moreOptions = "More options"
+    override val deleteCompleted = "Delete completed"
+    override val markDone = "Done"
+    override val markTodo = "Todo"
+    override val priority = "Priority"
+    override val copy = "Copy"
+    override val edit = "Edit"
+    override val repeatLabel = "Repeat"
+    override val moveTo = "Move to"
+    override val reminder = "Reminder"
+    override val current = "Current"
+    override val repeatTask = "Repeat task"
+    override val startFrom = "Start from"
+    override val remindMe = "Remind me"
+    override val clear = "Clear"
+    override val selectStartDate = "Select start date"
+
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
         ThemeMode.LIGHT -> "Light"
@@ -147,6 +191,10 @@ object EnglishStrings : AppStrings {
 
     override fun deletePageMessage(pageName: String) =
         "Permanently delete page '$pageName' and all its notes? This cannot be undone."
+
+    override fun completedTasks(count: Int) = "Completed tasks ($count)"
+
+    override fun moveCompletedMessage(count: Int) = "Move all $count completed tasks to trash?"
 }
 
 object FarsiStrings : AppStrings {
@@ -212,6 +260,27 @@ object FarsiStrings : AppStrings {
     override val restore = "بازیابی"
     override val deleteForever = "حذف برای همیشه"
 
+    // Note page
+    override val repeatingTask = "کار تکرارشونده"
+    override val upcomingReminder = "یادآور پیش‌رو"
+    override val dueDate = "تاریخ سررسید"
+    override val moreOptions = "گزینه‌های بیشتر"
+    override val deleteCompleted = "حذف انجام‌شده‌ها"
+    override val markDone = "انجام شد"
+    override val markTodo = "انجام نشده"
+    override val priority = "اولویت"
+    override val copy = "کپی"
+    override val edit = "ویرایش"
+    override val repeatLabel = "تکرار"
+    override val moveTo = "انتقال به"
+    override val reminder = "یادآور"
+    override val current = "فعلی"
+    override val repeatTask = "تکرار کار"
+    override val startFrom = "شروع از"
+    override val remindMe = "یادآوری کن"
+    override val clear = "پاک کردن"
+    override val selectStartDate = "انتخاب تاریخ شروع"
+
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
         ThemeMode.LIGHT -> "روشن"
@@ -224,6 +293,10 @@ object FarsiStrings : AppStrings {
 
     override fun deletePageMessage(pageName: String) =
         "صفحه‌ی «$pageName» و همه‌ی یادداشت‌های آن برای همیشه حذف شود؟ این عمل قابل بازگشت نیست."
+
+    override fun completedTasks(count: Int) = "کارهای انجام‌شده ($count)"
+
+    override fun moveCompletedMessage(count: Int) = "همه‌ی $count کار انجام‌شده به سطل زباله منتقل شوند؟"
 }
 
 fun stringsFor(language: AppLanguage): AppStrings = when (language) {

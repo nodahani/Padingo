@@ -145,6 +145,7 @@ fun NotePage(
     onToggleShowCompleted: () -> Unit = {},
     onDeleteCompletedTasks: (List<Note>) -> Unit = {},
 ) {
+    val strings = AppTheme.strings
     val isNotesType = pageType == PageType.NOTES
     val noteMovedToIndex = remember { mutableStateOf(-1) }
     var noteForRepeatDialog by remember { mutableStateOf<Note?>(null) }
@@ -510,7 +511,7 @@ fun NotePage(
                                             if (isRepeating) {
                                                 Icon(
                                                     imageVector = Icons.Filled.Repeat,
-                                                    contentDescription = "Repeating task",
+                                                    contentDescription = strings.repeatingTask,
                                                     modifier = Modifier.size(16.dp),
                                                     tint = colors.primaryText.copy(alpha = if (note.done) 0.33f else 0.4f)
                                                 )
@@ -518,7 +519,7 @@ fun NotePage(
                                             if (hasUpcomingReminder) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.Notifications,
-                                                    contentDescription = "Upcoming reminder",
+                                                    contentDescription = strings.upcomingReminder,
                                                     modifier = Modifier.size(16.dp),
                                                     tint = colors.primaryText.copy(alpha = if (note.done) 0.33f else 0.4f)
                                                 )
@@ -526,7 +527,7 @@ fun NotePage(
                                             if (hasDueDate) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.CalendarMonth,
-                                                    contentDescription = "Due date",
+                                                    contentDescription = strings.dueDate,
                                                     modifier = Modifier.size(16.dp),
                                                     tint = when {
                                                         note.done -> colors.primaryText.copy(alpha = 0.33f)
@@ -608,7 +609,7 @@ fun NotePage(
                                     )
                                     Spacer(Modifier.width(18.dp))
                                     Text(
-                                        text = "Completed tasks (${completedTasks.size})",
+                                        text = strings.completedTasks(completedTasks.size),
                                         fontSize = 18.sp,
                                         color = AppTheme.colors.primaryText.copy(alpha = 0.33f),
                                     )
@@ -617,7 +618,7 @@ fun NotePage(
                                 Box {
                                     Icon(
                                         imageVector = Icons.Default.MoreVert,
-                                        contentDescription = "More options",
+                                        contentDescription = strings.moreOptions,
                                         tint = AppTheme.colors.primaryText.copy(alpha = 0.33f),
                                         modifier = Modifier
                                             .clip(RoundedCornerShape(percent = 50))
@@ -633,7 +634,7 @@ fun NotePage(
                                         DropdownMenuItem(
                                             text = {
                                                 Text(
-                                                    text = "Delete completed",
+                                                    text = strings.deleteCompleted,
                                                     color = AppTheme.colors.primaryText,
                                                     fontSize = 16.sp,
                                                 )
@@ -723,7 +724,7 @@ fun NotePage(
                                                 if (isRepeating) {
                                                     Icon(
                                                         imageVector = Icons.Filled.Repeat,
-                                                        contentDescription = "Repeating task",
+                                                        contentDescription = strings.repeatingTask,
                                                         modifier = Modifier.size(16.dp),
                                                         tint = colors.primaryText.copy(alpha = 0.33f)
                                                     )
@@ -731,7 +732,7 @@ fun NotePage(
                                                 if (hasUpcomingReminder) {
                                                     Icon(
                                                         imageVector = Icons.Outlined.Notifications,
-                                                        contentDescription = "Upcoming reminder",
+                                                        contentDescription = strings.upcomingReminder,
                                                         modifier = Modifier.size(16.dp),
                                                         tint = colors.primaryText.copy(alpha = 0.33f)
                                                     )
@@ -739,7 +740,7 @@ fun NotePage(
                                                 if (hasDueDate) {
                                                     Icon(
                                                         imageVector = Icons.Outlined.CalendarMonth,
-                                                        contentDescription = "Due date",
+                                                        contentDescription = strings.dueDate,
                                                         modifier = Modifier.size(16.dp),
                                                         tint = colors.primaryText.copy(alpha = 0.33f)
                                                     )
@@ -926,9 +927,9 @@ fun NotePage(
 
             if (showDeleteCompletedDialog) {
                 ConfirmationDialog(
-                    title = "Delete completed",
-                    message = "Move all ${completedTasks.size} completed tasks to trash?",
-                    confirmText = "Move to trash",
+                    title = strings.deleteCompleted,
+                    message = strings.moveCompletedMessage(completedTasks.size),
+                    confirmText = strings.moveToTrash,
                     onDismiss = { showDeleteCompletedDialog = false },
                     onConfirm = {
                         onDeleteCompletedTasks(completedTasks)
@@ -1086,6 +1087,7 @@ internal fun NoteActionsMenu(
     onMoveTo: () -> Unit,
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     val currentFrequency = RepeatFrequency.fromOrdinal(note.repeatFrequency)
     val nowMillis = Clock.System.now().toEpochMilliseconds()
     val hasActiveReminder = note.reminderAt > nowMillis && note.reminderEnabled == 1
@@ -1123,7 +1125,7 @@ internal fun NoteActionsMenu(
             }
         }
     } else {
-        "Reminder"
+        strings.reminder
     }
 
     // Repeat and due date are mutually exclusive: repeating tasks schedule themselves
@@ -1131,7 +1133,7 @@ internal fun NoteActionsMenu(
     val dueDateLabel = if (note.hasDueDate && !isRepeating) {
         formatDueDateLabel(note.dueStartAt, note.dueEndAt)
     } else {
-        "Due date"
+        strings.dueDate
     }
 
     data class MenuAction(
@@ -1143,19 +1145,19 @@ internal fun NoteActionsMenu(
 
     val actions = listOf(
         MenuAction(
-            label = if (note.done) "Todo" else "Done",
+            label = if (note.done) strings.markTodo else strings.markDone,
             icon = Icons.Default.Check,
             tint = colors.primaryText,
             onClick = { onToggleDone(); onDismissRequest() }
         ),
         MenuAction(
-            label = "Priority",
+            label = strings.priority,
             icon = if (note.priority == 0) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
             tint = colors.primaryText,
             onClick = { onSetPriority(); onDismissRequest() }
         ),
         MenuAction(
-            label = "Copy",
+            label = strings.copy,
             icon = Icons.Default.ContentCopy,
             tint = colors.primaryText,
             onClick = { onCopy(); onDismissRequest() }
@@ -1167,19 +1169,19 @@ internal fun NoteActionsMenu(
             onClick = { onSetReminder(); onDismissRequest() }
         ),
         MenuAction(
-            label = "Edit",
+            label = strings.edit,
             icon = Icons.Outlined.EditNote,
             tint = colors.primaryText,
             onClick = { onEdit(); onDismissRequest() }
         ),
         MenuAction(
-            label = if (currentFrequency == RepeatFrequency.NONE) "Repeat" else currentFrequency.label,
+            label = if (currentFrequency == RepeatFrequency.NONE) strings.repeatLabel else currentFrequency.label,
             icon = Icons.Default.Repeat,
             tint = colors.primaryText,
             onClick = { onSetRepeat(); onDismissRequest() }
         ),
         MenuAction(
-            label = "Move to",
+            label = strings.moveTo,
             icon = Icons.Outlined.ArrowOutward,
             tint = colors.primaryText,
             onClick = { onMoveTo(); onDismissRequest() },
@@ -1191,7 +1193,7 @@ internal fun NoteActionsMenu(
             onClick = if (isRepeating) ({}) else ({ onSetDueDate(); onDismissRequest() })
         ),
         MenuAction(
-            label = "Delete",
+            label = strings.delete,
             icon = Icons.Default.Delete,
             tint = colors.primaryText,
             onClick = { onDelete(); onDismissRequest() }
@@ -1301,6 +1303,7 @@ internal fun RepeatFrequencyDialog(
     var reminderEnabled by remember { mutableStateOf(isReminderEnabled) }
     var showStartDatePicker by remember { mutableStateOf(false) }
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     val timeZone = TimeZone.currentSystemDefault()
     val now = Clock.System.now()
 
@@ -1341,7 +1344,7 @@ internal fun RepeatFrequencyDialog(
             shadowElevation = 8.dp,
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Repeat task", color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
+                Text(strings.repeatTask, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
                 Spacer(Modifier.height(16.dp))
 
                 // 2 column grid for frequency options
@@ -1394,7 +1397,7 @@ internal fun RepeatFrequencyDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Start from", color = colors.primaryText, fontSize = 15.sp)
+                        Text(strings.startFrom, color = colors.primaryText, fontSize = 15.sp)
                         Text(
                             text = startDateLabel,
                             color = colors.primaryText.copy(alpha = 0.7f),
@@ -1417,7 +1420,7 @@ internal fun RepeatFrequencyDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Remind me", color = colors.primaryText, fontSize = 15.sp)
+                        Text(strings.remindMe, color = colors.primaryText, fontSize = 15.sp)
                         androidx.compose.material3.Switch(
                             checked = reminderEnabled,
                             onCheckedChange = { reminderEnabled = it },
@@ -1450,7 +1453,7 @@ internal fun RepeatFrequencyDialog(
                         TextButton(onClick = {
                             onConfirm(RepeatFrequency.NONE, 0L, null, false)
                         }) {
-                            Text("Clear", color = colors.primaryText.copy(alpha = 0.6f))
+                            Text(strings.clear, color = colors.primaryText.copy(alpha = 0.6f))
                         }
                     } else {
                         Spacer(Modifier.width(1.dp))
@@ -1458,7 +1461,7 @@ internal fun RepeatFrequencyDialog(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = colors.primaryText)
+                            Text(strings.cancel, color = colors.primaryText)
                         }
                         Button(
                             onClick = {
@@ -1504,7 +1507,7 @@ internal fun RepeatFrequencyDialog(
                                 contentColor = colors.menuBackground
                             )
                         ) {
-                            Text("Save")
+                            Text(strings.save)
                         }
                     }
                 }
@@ -1805,9 +1808,10 @@ internal fun StartDatePickerDialog(
     initialDate: LocalDate,
     onDismiss: () -> Unit,
     onConfirm: (LocalDate) -> Unit,
-    title: String = "Select start date",
+    title: String = AppTheme.strings.selectStartDate,
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     var selectedDate by remember { mutableStateOf(initialDate) }
     val timeZone = TimeZone.currentSystemDefault()
     val today = remember { Clock.System.now().toLocalDateTime(timeZone).date }
@@ -1911,7 +1915,7 @@ internal fun StartDatePickerDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", color = colors.primaryText)
+                        Text(strings.cancel, color = colors.primaryText)
                     }
                     Spacer(Modifier.width(8.dp))
                     Button(
@@ -1922,7 +1926,7 @@ internal fun StartDatePickerDialog(
                         ),
                         shape = RoundedCornerShape(20.dp)
                     ) {
-                        Text("Done")
+                        Text(strings.done)
                     }
                 }
             }
@@ -2042,6 +2046,7 @@ internal fun MoveToDialog(
     onConfirm: (Long) -> Unit,
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
 
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -2051,7 +2056,7 @@ internal fun MoveToDialog(
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    "Move to",
+                    strings.moveTo,
                     color = colors.primaryText,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp
@@ -2090,7 +2095,7 @@ internal fun MoveToDialog(
                                 if (isCurrentPage) {
                                     Spacer(Modifier.weight(1f))
                                     Text(
-                                        text = "Current",
+                                        text = strings.current,
                                         color = colors.primaryText.copy(alpha = 0.4f),
                                         fontSize = 12.sp
                                     )
@@ -2123,7 +2128,7 @@ internal fun MoveToDialog(
                                 if (isCurrentSubPage) {
                                     Spacer(Modifier.weight(1f))
                                     Text(
-                                        text = "Current",
+                                        text = strings.current,
                                         color = colors.primaryText.copy(alpha = 0.4f),
                                         fontSize = 12.sp
                                     )
@@ -2139,7 +2144,7 @@ internal fun MoveToDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", color = colors.primaryText)
+                        Text(strings.cancel, color = colors.primaryText)
                     }
                 }
             }
@@ -2156,6 +2161,7 @@ private fun ConfirmationDialog(
     onConfirm: () -> Unit,
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(28.dp),
@@ -2169,7 +2175,7 @@ private fun ConfirmationDialog(
                 Spacer(Modifier.height(24.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel", color = colors.primaryText)
+                        Text(strings.cancel, color = colors.primaryText)
                     }
                     Button(
                         onClick = onConfirm,
