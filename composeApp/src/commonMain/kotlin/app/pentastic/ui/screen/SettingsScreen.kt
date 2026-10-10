@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PersonAdd
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pentastic.ui.composables.CalendarSelectionDialog
 import app.pentastic.ui.composables.ThemeSelectionDialog
 import app.pentastic.ui.composables.LanguageSelectionDialog
 import app.pentastic.ui.theme.AppTheme
@@ -67,6 +69,9 @@ fun SettingsScreen(
 
     val language by viewModel.language.collectAsState()
     var showLanguageDialog by remember { mutableStateOf(false) }
+
+    val calendar by viewModel.calendar.collectAsState()
+    var showCalendarDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -109,6 +114,19 @@ fun SettingsScreen(
             trailing = {
                 Text(
                     text = language.label,
+                    fontSize = 14.sp,
+                    color = colors.hint,
+                )
+            }
+        )
+
+        SettingsItem(
+            icon = { Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
+            title = strings.calendar,
+            onClick = { showCalendarDialog = true },
+            trailing = {
+                Text(
+                    text = strings.calendarLabel(calendar),
                     fontSize = 14.sp,
                     color = colors.hint,
                 )
@@ -176,6 +194,17 @@ fun SettingsScreen(
             onConfirm = { selectedLanguage ->
                 viewModel.setLanguage(selectedLanguage)
                 showLanguageDialog = false
+            }
+        )
+    }
+
+    if (showCalendarDialog) {
+        CalendarSelectionDialog(
+            currentCalendar = viewModel.calendar.value,
+            onDismiss = { showCalendarDialog = false },
+            onConfirm = { selectedCalendar ->
+                viewModel.setCalendar(selectedCalendar)
+                showCalendarDialog = false
             }
         )
     }

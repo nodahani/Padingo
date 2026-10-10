@@ -93,6 +93,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.data.Page
 import app.pentastic.data.AppLanguage
+import app.pentastic.data.AppCalendar
 import app.pentastic.data.PageType
 import app.pentastic.data.ThemeMode
 import app.pentastic.ui.theme.AppTheme
@@ -1207,6 +1208,63 @@ fun LanguageSelectionDialog(
                     }
                     Button(
                         onClick = { onConfirm(selectedLanguage) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.primaryText,
+                            contentColor = colors.menuBackground
+                        )
+                    ) {
+                        Text(strings.save)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CalendarSelectionDialog(
+    currentCalendar: AppCalendar,
+    onDismiss: () -> Unit,
+    onConfirm: (AppCalendar) -> Unit,
+) {
+    var selectedCalendar by remember { mutableStateOf(currentCalendar) }
+    val colors = colors
+    val strings = AppTheme.strings
+
+    BasicAlertDialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = colors.menuBackground,
+            shadowElevation = 8.dp,
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(strings.calendar, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
+                Spacer(Modifier.height(16.dp))
+                AppCalendar.entries.forEach { calendar ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { selectedCalendar = calendar }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        RadioButton(
+                            selected = selectedCalendar == calendar,
+                            onClick = { selectedCalendar = calendar },
+                            colors = appRadioButtonColors(),
+                        )
+                        Text(text = strings.calendarLabel(calendar), color = colors.primaryText)
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    TextButton(onClick = onDismiss) {
+                        Text(strings.cancel, color = colors.primaryText)
+                    }
+                    Button(
+                        onClick = { onConfirm(selectedCalendar) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors.primaryText,
                             contentColor = colors.menuBackground

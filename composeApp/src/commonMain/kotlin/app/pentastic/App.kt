@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
+import app.pentastic.data.AppCalendar
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.DataStoreRepository
 import app.pentastic.data.ThemeMode
@@ -22,7 +23,10 @@ fun App() {
     val languageOrdinal by dataStoreRepository.language.collectAsState(initial = AppLanguage.ENGLISH.ordinal)
     val language = AppLanguage.fromOrdinal(languageOrdinal)
 
-    AppTheme(themeMode = themeMode, language = language) {
+    val calendarOrdinal by dataStoreRepository.calendar.collectAsState(initial = AppCalendar.GREGORIAN.ordinal)
+    val calendar = AppCalendar.fromOrdinal(calendarOrdinal)
+
+    AppTheme(themeMode = themeMode, language = language, calendar = calendar) {
         val navController = rememberNavController()
         SetupNavGraph(navController = navController)
     }

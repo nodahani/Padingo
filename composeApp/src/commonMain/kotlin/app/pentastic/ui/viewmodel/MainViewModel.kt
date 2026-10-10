@@ -10,6 +10,7 @@ import app.pentastic.data.PageType
 import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.ThemeMode
 import app.pentastic.data.AppLanguage
+import app.pentastic.data.AppCalendar
 import app.pentastic.notification.ReminderScheduler
 import app.pentastic.notification.nextFutureReminderTime
 import app.pentastic.utils.hasBeenHours
@@ -44,6 +45,9 @@ class MainViewModel(
 
     private val _language = MutableStateFlow(AppLanguage.ENGLISH)
     val language: StateFlow<AppLanguage> = _language.asStateFlow()
+
+    private val _calendar = MutableStateFlow(AppCalendar.GREGORIAN)
+    val calendar: StateFlow<AppCalendar> = _calendar.asStateFlow()
 
     private val _notesByPage = MutableStateFlow<Map<Long, List<Note>>>(emptyMap())
     val notesByPage: StateFlow<Map<Long, List<Note>>> = _notesByPage.asStateFlow()
@@ -106,6 +110,7 @@ class MainViewModel(
         checkForRateButton()
         loadThemeMode()
         loadLanguage()
+        loadCalendar()
         loadShowCompletedTasks()
         loadShowTimeline()
         loadShowSubPages()
@@ -541,6 +546,21 @@ class MainViewModel(
         viewModelScope.launch {
             _language.value = language
             dataStoreRepository.saveLanguage(language.ordinal)
+        }
+    }
+
+    private fun loadCalendar() {
+        viewModelScope.launch {
+            dataStoreRepository.calendar.collect { ordinal ->
+                _calendar.value = AppCalendar.fromOrdinal(ordinal)
+            }
+        }
+    }
+
+    fun setCalendar(calendar: AppCalendar) {
+        viewModelScope.launch {
+            _calendar.value = calendar
+            dataStoreRepository.saveCalendar(calendar.ordinal)
         }
     }
 

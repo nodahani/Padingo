@@ -2,6 +2,7 @@ package app.pentastic.ui.strings
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import app.pentastic.data.AppLanguage
+import app.pentastic.data.AppCalendar
 import app.pentastic.data.ThemeMode
 
 interface AppStrings {
@@ -102,12 +103,16 @@ interface AppStrings {
     val permissionMessage: String
     val continueLabel: String
 
+    // Calendar
+    val calendar: String
+
     // Functions
     fun themeLabel(mode: ThemeMode): String
     fun archiveCount(count: Int): String
     fun deletePageMessage(pageName: String): String
     fun completedTasks(count: Int): String
     fun moveCompletedMessage(count: Int): String
+    fun calendarLabel(calendar: AppCalendar): String
 }
 
 object EnglishStrings : AppStrings {
@@ -211,6 +216,9 @@ object EnglishStrings : AppStrings {
         "To set reminders, we need permission to send notifications and schedule alarms."
     override val continueLabel = "Continue"
 
+    // Calendar
+    override val calendar = "Calendar"
+
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
         ThemeMode.LIGHT -> "Light"
@@ -227,6 +235,11 @@ object EnglishStrings : AppStrings {
     override fun completedTasks(count: Int) = "Completed tasks ($count)"
 
     override fun moveCompletedMessage(count: Int) = "Move all $count completed tasks to trash?"
+
+    override fun calendarLabel(calendar: AppCalendar) = when (calendar) {
+        AppCalendar.GREGORIAN -> "Gregorian"
+        AppCalendar.JALALI -> "Jalali (Persian)"
+    }
 }
 
 object FarsiStrings : AppStrings {
@@ -329,6 +342,9 @@ object FarsiStrings : AppStrings {
     override val permissionMessage =
         "برای تنظیم یادآور، به اجازه‌ی ارسال اعلان و زمان‌بندی هشدار نیاز داریم."
     override val continueLabel = "ادامه"
+        
+    // Calendar
+    override val calendar = "تقویم"
 
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
@@ -346,6 +362,11 @@ object FarsiStrings : AppStrings {
     override fun completedTasks(count: Int) = "کارهای انجام‌شده ($count)"
 
     override fun moveCompletedMessage(count: Int) = "همه‌ی $count کار انجام‌شده به سطل زباله منتقل شوند؟"
+
+    override fun calendarLabel(calendar: AppCalendar) = when (calendar) {
+        AppCalendar.GREGORIAN -> "میلادی"
+        AppCalendar.JALALI -> "شمسی"
+    }
 }
 
 fun stringsFor(language: AppLanguage): AppStrings = when (language) {

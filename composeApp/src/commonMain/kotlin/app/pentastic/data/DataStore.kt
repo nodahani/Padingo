@@ -23,6 +23,8 @@ object DatastoreKeys {
     val SHOW_TIMELINE = booleanPreferencesKey("show_timeline")
     val SHOW_SUB_PAGES = booleanPreferencesKey("show_sub_pages")
     val LANGUAGE = intPreferencesKey("language")
+    val LANGUAGE = intPreferencesKey("language")
+    val CALENDAR = intPreferencesKey("calendar")
 }
 
 class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
@@ -117,5 +119,17 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { settings ->
             settings[DatastoreKeys.LANGUAGE] = language
         }
+    }    
+    
+    val calendar: Flow<Int> = dataStore.data.map { preferences ->
+        preferences[DatastoreKeys.CALENDAR] ?: AppCalendar.GREGORIAN.ordinal
     }
+
+    suspend fun saveCalendar(calendar: Int) {
+        dataStore.edit { settings ->
+            settings[DatastoreKeys.CALENDAR] = calendar
+        }
+    }
+
+
 }

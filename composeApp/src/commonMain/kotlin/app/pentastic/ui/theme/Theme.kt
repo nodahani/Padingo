@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.platform.LocalLayoutDirection
 import app.pentastic.data.AppLanguage
+import app.pentastic.data.AppCalendar
 import app.pentastic.data.ThemeMode
 import app.pentastic.ui.strings.AppStrings
 import app.pentastic.ui.strings.LocalStrings
@@ -67,6 +68,7 @@ val DarkColors = AppColors(
 )
 
 val LocalAppColors = staticCompositionLocalOf { LightColors }
+val LocalAppCalendar = staticCompositionLocalOf { AppCalendar.GREGORIAN }
 
 object AppTheme {
     val colors: AppColors
@@ -76,6 +78,10 @@ object AppTheme {
     val strings: AppStrings
         @Composable
         get() = LocalStrings.current
+
+    val calendar: AppCalendar
+        @Composable
+        get() = LocalAppCalendar.current
 }
 
 /**
@@ -118,6 +124,7 @@ fun isDayNightDark(): Boolean {
 fun AppTheme(
     themeMode: ThemeMode = ThemeMode.DAY_NIGHT,
     language: AppLanguage = AppLanguage.ENGLISH,
+    calendar: AppCalendar = AppCalendar.GREGORIAN,
     content: @Composable () -> Unit,
 ) {
     val darkTheme = when (themeMode) {
@@ -138,10 +145,11 @@ fun AppTheme(
         LocalAppColors provides colors,
         LocalLayoutDirection provides layoutDirection,
         LocalStrings provides stringsFor(language),
+        LocalAppCalendar provides calendar,
     ) {
         MaterialTheme(
             typography = appTypography(isFarsi = language == AppLanguage.FARSI),
-           ) {
+        ) {
             content()
         }
     }
