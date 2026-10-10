@@ -23,7 +23,6 @@ object DatastoreKeys {
     val SHOW_TIMELINE = booleanPreferencesKey("show_timeline")
     val SHOW_SUB_PAGES = booleanPreferencesKey("show_sub_pages")
     val LANGUAGE = intPreferencesKey("language")
-    val LANGUAGE = intPreferencesKey("language")
     val CALENDAR = intPreferencesKey("calendar")
 }
 
