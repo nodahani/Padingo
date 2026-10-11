@@ -106,6 +106,9 @@ interface AppStrings {
     // Calendar
     val calendar: String
 
+    // Dates
+    val someday: String
+
     // Functions
     fun themeLabel(mode: ThemeMode): String
     fun archiveCount(count: Int): String
@@ -218,6 +221,9 @@ object EnglishStrings : AppStrings {
 
     // Calendar
     override val calendar = "Calendar"
+
+    // Dates
+    override val someday = "Someday"
 
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
@@ -345,6 +351,9 @@ object FarsiStrings : AppStrings {
         
     // Calendar
     override val calendar = "تقویم"
+
+    // Dates
+    override val someday = "بعداً"
 
     // Functions
     override fun themeLabel(mode: ThemeMode) = when (mode) {
