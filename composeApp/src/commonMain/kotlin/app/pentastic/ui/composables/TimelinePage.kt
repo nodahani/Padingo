@@ -128,7 +128,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
     ) { mutableStateOf(setOf<String>()) }
 
     val sections: List<TimelineSectionUi> =
-        remember(notesByPage, pages, subPagesByParent, timelinePage, today, dateTexts) {
+        remember(notesByPage, pages, subPagesByParent, timelinePage, today, dateTexts, strings) {
             // Live (non-deleted, non-archived) pages = root pages + their sub-pages + the Timeline page itself
             val livePageIds = buildSet {
                 pages.forEach { add(it.id) }
@@ -161,7 +161,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                     add(
                         TimelineSectionUi(
                             key = section.name,
-                            label = section.label,
+                            label = strings.timelineSection(section),
                             subtitle = sectionSubtitle(section, today,dateTexts),
                             notes = sectionNotes,
                             collapsedByDefault = when {
@@ -192,7 +192,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                 add(
                     TimelineSectionUi(
                         key = TimelineSection.SOMEDAY.name,
-                        label = TimelineSection.SOMEDAY.label,
+                        label = strings.timelineSection(TimelineSection.SOMEDAY),
                         notes = prioritySort(someday),
                         collapsedByDefault = true,
                     )
@@ -639,7 +639,7 @@ private fun TimelineEmptyState(today: LocalDate) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = TimelineSection.TODAY.label,
+            text = strings.timelineSection(TimelineSection.TODAY),
             fontSize = 36.sp,
             fontFamily = FontFamily(Font(Res.font.Merriweather_Light)),
             color = colors.pageTitle,
@@ -670,7 +670,7 @@ private fun TimelineEmptyState(today: LocalDate) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = section.label,
+                text = strings.timelineSection(section),
                 fontSize = 18.sp,
                 color = colors.pageTitle,
                 modifier = Modifier.alignByBaseline(),

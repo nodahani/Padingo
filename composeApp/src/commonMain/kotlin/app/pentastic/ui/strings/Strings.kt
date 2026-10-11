@@ -2,6 +2,9 @@ package app.pentastic.ui.strings
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import app.pentastic.data.AppLanguage
+import app.pentastic.data.DueDateOption
+import app.pentastic.data.RepeatFrequency
+import app.pentastic.data.TimelineSection
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.ThemeMode
 
@@ -116,6 +119,9 @@ interface AppStrings {
     fun completedTasks(count: Int): String
     fun moveCompletedMessage(count: Int): String
     fun calendarLabel(calendar: AppCalendar): String
+    fun dueOption(option: DueDateOption): String
+    fun timelineSection(section: TimelineSection): String
+    fun repeatFrequency(frequency: RepeatFrequency): String
 }
 
 object EnglishStrings : AppStrings {
@@ -246,6 +252,40 @@ object EnglishStrings : AppStrings {
         AppCalendar.GREGORIAN -> "Gregorian"
         AppCalendar.JALALI -> "Jalali (Persian)"
     }
+
+    override fun dueOption(option: DueDateOption) = when (option) {
+        DueDateOption.TODAY -> "Today"
+        DueDateOption.TOMORROW -> "Tomorrow"
+        DueDateOption.THIS_WEEK -> "This week"
+        DueDateOption.NEXT_WEEK -> "Next week"
+        DueDateOption.THIS_MONTH -> "This month"
+        DueDateOption.NEXT_MONTH -> "Next month"
+        DueDateOption.THIS_YEAR -> "This year"
+        DueDateOption.NEXT_YEAR -> "Next year"
+        DueDateOption.SOMEDAY -> "Someday"
+        DueDateOption.CUSTOM -> "Custom"
+    }
+
+    override fun timelineSection(section: TimelineSection) = when (section) {
+        TimelineSection.OVERDUE -> "Overdue"
+        TimelineSection.TODAY -> "Today"
+        TimelineSection.TOMORROW -> "Tomorrow"
+        TimelineSection.THIS_WEEK -> "This week"
+        TimelineSection.THIS_WEEKEND -> "This weekend"
+        TimelineSection.NEXT_WEEK -> "Next week"
+        TimelineSection.THIS_MONTH -> "This month"
+        TimelineSection.NEXT_MONTH -> "Next month"
+        TimelineSection.SOMEDAY -> "Someday"
+    }
+
+    override fun repeatFrequency(frequency: RepeatFrequency) = when (frequency) {
+        RepeatFrequency.NONE -> "None"
+        RepeatFrequency.DAILY -> "Daily"
+        RepeatFrequency.WEEKLY -> "Weekly"
+        RepeatFrequency.MONTHLY -> "Monthly"
+        RepeatFrequency.QUARTERLY -> "Quarterly"
+        RepeatFrequency.YEARLY -> "Yearly"
+    }
 }
 
 object FarsiStrings : AppStrings {
@@ -375,6 +415,40 @@ object FarsiStrings : AppStrings {
     override fun calendarLabel(calendar: AppCalendar) = when (calendar) {
         AppCalendar.GREGORIAN -> "میلادی"
         AppCalendar.JALALI -> "شمسی"
+    }
+
+    override fun dueOption(option: DueDateOption) = when (option) {
+        DueDateOption.TODAY -> "امروز"
+        DueDateOption.TOMORROW -> "فردا"
+        DueDateOption.THIS_WEEK -> "این هفته"
+        DueDateOption.NEXT_WEEK -> "هفته بعد"
+        DueDateOption.THIS_MONTH -> "این ماه"
+        DueDateOption.NEXT_MONTH -> "ماه بعد"
+        DueDateOption.THIS_YEAR -> "امسال"
+        DueDateOption.NEXT_YEAR -> "سال بعد"
+        DueDateOption.SOMEDAY -> "بعداً"
+        DueDateOption.CUSTOM -> "دلخواه"
+    }
+
+    override fun timelineSection(section: TimelineSection) = when (section) {
+        TimelineSection.OVERDUE -> "عقب‌افتاده"
+        TimelineSection.TODAY -> "امروز"
+        TimelineSection.TOMORROW -> "فردا"
+        TimelineSection.THIS_WEEK -> "این هفته"
+        TimelineSection.THIS_WEEKEND -> "آخر هفته"
+        TimelineSection.NEXT_WEEK -> "هفته بعد"
+        TimelineSection.THIS_MONTH -> "این ماه"
+        TimelineSection.NEXT_MONTH -> "ماه بعد"
+        TimelineSection.SOMEDAY -> "بعداً"
+    }
+
+    override fun repeatFrequency(frequency: RepeatFrequency) = when (frequency) {
+        RepeatFrequency.NONE -> "هیچ"
+        RepeatFrequency.DAILY -> "روزانه"
+        RepeatFrequency.WEEKLY -> "هفتگی"
+        RepeatFrequency.MONTHLY -> "ماهانه"
+        RepeatFrequency.QUARTERLY -> "سه‌ماهه"
+        RepeatFrequency.YEARLY -> "سالانه"
     }
 }
 
