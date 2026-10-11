@@ -1131,7 +1131,7 @@ internal fun NoteActionsMenu(
     // Repeat and due date are mutually exclusive: repeating tasks schedule themselves
     val isRepeating = currentFrequency != RepeatFrequency.NONE
     val dueDateLabel = if (note.hasDueDate && !isRepeating) {
-        formatDueDateLabel(note.dueStartAt, note.dueEndAt)
+    formatDueDateLabel(note.dueStartAt, note.dueEndAt, AppTheme.dateTexts, strings.someday)
     } else {
         strings.dueDate
     }

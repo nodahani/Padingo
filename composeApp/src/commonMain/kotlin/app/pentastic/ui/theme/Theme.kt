@@ -8,21 +8,22 @@ import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.platform.LocalLayoutDirection
-import app.pentastic.data.AppLanguage
+import androidx.compose.ui.unit.LayoutDirection
 import app.pentastic.data.AppCalendar
+import app.pentastic.data.AppLanguage
 import app.pentastic.data.ThemeMode
 import app.pentastic.ui.strings.AppStrings
 import app.pentastic.ui.strings.LocalStrings
 import app.pentastic.ui.strings.stringsFor
+import app.pentastic.utils.DateTexts
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-
 
 data class AppColors(
     val background: Color,
@@ -69,6 +70,7 @@ val DarkColors = AppColors(
 
 val LocalAppColors = staticCompositionLocalOf { LightColors }
 val LocalAppCalendar = staticCompositionLocalOf { AppCalendar.GREGORIAN }
+val LocalDateTexts = staticCompositionLocalOf { DateTexts(AppLanguage.ENGLISH, AppCalendar.GREGORIAN) }
 
 object AppTheme {
     val colors: AppColors
@@ -82,6 +84,10 @@ object AppTheme {
     val calendar: AppCalendar
         @Composable
         get() = LocalAppCalendar.current
+
+    val dateTexts: DateTexts
+        @Composable
+        get() = LocalDateTexts.current
 }
 
 /**
@@ -140,12 +146,14 @@ fun AppTheme(
     SystemBarEffect(isDarkTheme = darkTheme)
 
     val layoutDirection = if (language.isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+    val dateTexts = remember(language, calendar) { DateTexts(language, calendar) }
 
     CompositionLocalProvider(
         LocalAppColors provides colors,
         LocalLayoutDirection provides layoutDirection,
         LocalStrings provides stringsFor(language),
         LocalAppCalendar provides calendar,
+        LocalDateTexts provides dateTexts,
     ) {
         MaterialTheme(
             typography = appTypography(isFarsi = language == AppLanguage.FARSI),

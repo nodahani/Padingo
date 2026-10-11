@@ -4,13 +4,13 @@ package app.pentastic.data
 
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import app.pentastic.utils.nextRepeatDate
+import app.pentastic.utils.DateTexts
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -80,31 +80,16 @@ fun Note.isDueOverdue(nowMillis: Long, timeZone: TimeZone = TimeZone.currentSyst
 fun formatDueDateLabel(
     dueStartAt: Long,
     dueEndAt: Long,
+    texts: DateTexts,
+    somedayLabel: String,
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
 ): String {
-    if (dueStartAt == DUE_SOMEDAY) return "Someday"
-    val start = dueValueToLocalDate(dueStartAt, timeZone)
-    val end = dueValueToLocalDate(dueEndAt, timeZone)
-    val currentYear = Clock.System.now().toLocalDateTime(timeZone).date.year
-
-    if (start.year != end.year) {
-        return "${start.dayOfMonth} ${monthAbbrev(start.month)} ${twoDigitYear(start.year)} – " +
-                "${end.dayOfMonth} ${monthAbbrev(end.month)} ${twoDigitYear(end.year)}"
-    }
-
-    val yearSuffix = if (start.year != currentYear) " ${start.year}" else ""
-    return when {
-        start == end -> "${start.dayOfMonth} ${monthAbbrev(start.month)}$yearSuffix"
-        start.month == end.month -> "${start.dayOfMonth}–${end.dayOfMonth} ${monthAbbrev(start.month)}$yearSuffix"
-        else -> "${start.dayOfMonth} ${monthAbbrev(start.month)} – ${end.dayOfMonth} ${monthAbbrev(end.month)}$yearSuffix"
-    }
+    if (dueStartAt == DUE_SOMEDAY) return somedayLabel
+    val start = dueValueToLocalDate(dueStartAt, timeZone).toEpochDays().toInt()
+    val end = dueValueToLocalDate(dueEndAt, timeZone).toEpochDays().toInt()
+    val today = Clock.System.now().toLocalDateTime(timeZone).date.toEpochDays().toInt()
+    return texts.dueRangeLabel(start, end, today)
 }
-
-private fun monthAbbrev(month: Month): String =
-    month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-
-private fun twoDigitYear(year: Int): String =
-    (year % 100).toString().padStart(2, '0')
 
 /** Fixed timeline sections in display order (enum order is the on-screen order). */
 enum class TimelineSection(val label: String) {
