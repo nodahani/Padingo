@@ -1175,7 +1175,7 @@ internal fun NoteActionsMenu(
             onClick = { onEdit(); onDismissRequest() }
         ),
         MenuAction(
-            label = if (currentFrequency == RepeatFrequency.NONE) strings.repeatLabel else currentFrequency.label,
+            label = if (currentFrequency == RepeatFrequency.NONE) strings.repeatLabel else strings.repeatFrequency(currentFrequency),
             icon = Icons.Default.Repeat,
             tint = colors.primaryText,
             onClick = { onSetRepeat(); onDismissRequest() }
@@ -1370,7 +1370,7 @@ internal fun RepeatFrequencyDialog(
                                     onClick = { selectedFrequency = frequency },
                                     colors = appRadioButtonColors(),
                                 )
-                                Text(text = frequency.label, color = colors.primaryText)
+                                Text(text = strings.repeatFrequency(frequency), color = colors.primaryText)
                             }
                         }
                         // Add empty space if odd number of items in last row

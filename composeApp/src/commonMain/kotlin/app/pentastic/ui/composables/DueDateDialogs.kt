@@ -164,7 +164,7 @@ internal fun DueDateOptionsDialog(
                                             onClick = { onOptionTap(option) },
                                             colors = appRadioButtonColors(),
                                         )
-                                        Text(text = option.label, color = colors.primaryText)
+                                        Text(text = strings.dueOption(option), color = colors.primaryText)
                                     }
                                 }
                                 if (rowItems.size == 1) {
@@ -177,7 +177,7 @@ internal fun DueDateOptionsDialog(
                     DueDatePage.MONTHS -> {
                         // Only reachable after a year preset was tapped, so selectedOption is set
                         val option = selectedOption!!
-                        DrillPageHeader(title = option.label, onBack = { page = DueDatePage.OPTIONS })
+                        DrillPageHeader(title = strings.dueOption(option), onBack = { page = DueDatePage.OPTIONS })
                         Spacer(Modifier.height(16.dp))
 
                         Month.entries.chunked(3).forEach { rowMonths ->
@@ -219,8 +219,8 @@ internal fun DueDateOptionsDialog(
                             if (option.drillsToMonths) monthBlock(option.presetYear(today), chosenMonth!!)
                             else option.resolveRange(today)!!
                         val title =
-                            if (option.drillsToMonths) "${option.label} · ${monthLabel(chosenMonth!!)}"
-                            else option.label
+                            if (option.drillsToMonths) "${strings.dueOption(option)} · ${monthLabel(chosenMonth!!)}"
+                            else strings.dueOption(option)
                         DrillPageHeader(
                             title = title,
                             onBack = {
