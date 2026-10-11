@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Icon
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import app.pentastic.data.Note
+import app.pentastic.utils.DateTexts
 import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.TimelineBucket
 import app.pentastic.data.TimelineSection
@@ -86,6 +87,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun TimelinePage(modifier: Modifier = Modifier) {
     val colors = AppTheme.colors
+    val dateTexts = AppTheme.dateTexts
     val strings = AppTheme.strings
     val viewModel = koinViewModel<MainViewModel>()
     val notesByPage by viewModel.notesByPage.collectAsState()
@@ -126,7 +128,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
     ) { mutableStateOf(setOf<String>()) }
 
     val sections: List<TimelineSectionUi> =
-        remember(notesByPage, pages, subPagesByParent, timelinePage, today) {
+        remember(notesByPage, pages, subPagesByParent, timelinePage, today, dateTexts) {
             // Live (non-deleted, non-archived) pages = root pages + their sub-pages + the Timeline page itself
             val livePageIds = buildSet {
                 pages.forEach { add(it.id) }
@@ -160,7 +162,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                         TimelineSectionUi(
                             key = section.name,
                             label = section.label,
-                            subtitle = sectionSubtitle(section, today),
+                            subtitle = sectionSubtitle(section, today,dateTexts),
                             notes = sectionNotes,
                             collapsedByDefault = when {
                                 section.ordinal <= TimelineSection.THIS_WEEKEND.ordinal -> false
@@ -626,6 +628,7 @@ private data class TimelineSectionUi(
 @Composable
 private fun TimelineEmptyState(today: LocalDate) {
     val colors = AppTheme.colors
+    val dateTexts = AppTheme.dateTexts
     val strings = AppTheme.strings
     Row(
         modifier = Modifier
@@ -644,7 +647,7 @@ private fun TimelineEmptyState(today: LocalDate) {
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = "· ${dayDateLabel(today)}",
+            text = "· ${dateTexts.dayDateLabel(today.toEpochDays().toInt())}",
             fontSize = 16.sp,
             color = colors.hint,
             modifier = Modifier.alignByBaseline(),
@@ -672,7 +675,7 @@ private fun TimelineEmptyState(today: LocalDate) {
                 color = colors.pageTitle,
                 modifier = Modifier.alignByBaseline(),
             )
-            sectionSubtitle(section, today)?.let { subtitle ->
+            sectionSubtitle(section, today, dateTexts)?.let { subtitle ->
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = "· $subtitle",
@@ -686,19 +689,21 @@ private fun TimelineEmptyState(today: LocalDate) {
 }
 
 /** Light-grey date context shown next to a section title, e.g. "Tue, 4 Aug" or "3–9 Aug". */
-private fun sectionSubtitle(section: TimelineSection, today: LocalDate): String? {
+private fun sectionSubtitle(section: TimelineSection, today: LocalDate, texts: DateTexts): String? {
+    fun day(date: LocalDate) = texts.dayDateLabel(date.toEpochDays().toInt())
+    fun range(start: LocalDate, end: LocalDate) =
+        texts.rangeLabel(start.toEpochDays().toInt(), end.toEpochDays().toInt())
+
     val weekStart = today.minus(today.dayOfWeek.isoDayNumber - 1, DateTimeUnit.DAY)
     return when (section) {
-        TimelineSection.TODAY -> dayDateLabel(today)
-        TimelineSection.TOMORROW -> dayDateLabel(today.plus(1, DateTimeUnit.DAY))
-        TimelineSection.THIS_WEEK ->
-            rangeLabel(weekStart, weekStart.plus(6, DateTimeUnit.DAY))
-
+        TimelineSection.TODAY -> day(today)
+        TimelineSection.TOMORROW -> day(today.plus(1, DateTimeUnit.DAY))
+        TimelineSection.THIS_WEEK -> range(weekStart, weekStart.plus(6, DateTimeUnit.DAY))
         TimelineSection.THIS_WEEKEND ->
-            rangeLabel(weekStart.plus(5, DateTimeUnit.DAY), weekStart.plus(6, DateTimeUnit.DAY))
+            range(weekStart.plus(5, DateTimeUnit.DAY), weekStart.plus(6, DateTimeUnit.DAY))
 
         TimelineSection.NEXT_WEEK ->
-            rangeLabel(weekStart.plus(7, DateTimeUnit.DAY), weekStart.plus(13, DateTimeUnit.DAY))
+            range(weekStart.plus(7, DateTimeUnit.DAY), weekStart.plus(13, DateTimeUnit.DAY))
 
         TimelineSection.THIS_MONTH -> monthFullLabel(today.month)
         TimelineSection.NEXT_MONTH ->
@@ -707,19 +712,6 @@ private fun sectionSubtitle(section: TimelineSection, today: LocalDate): String?
         TimelineSection.OVERDUE, TimelineSection.SOMEDAY -> null
     }
 }
-
-private fun dayDateLabel(date: LocalDate): String =
-    "${dayAbbrev(date)}, ${date.dayOfMonth} ${monthAbbrev(date.month)}"
-
-private fun rangeLabel(start: LocalDate, end: LocalDate): String =
-    if (start.month == end.month) "${start.dayOfMonth}–${end.dayOfMonth} ${monthAbbrev(start.month)}"
-    else "${start.dayOfMonth} ${monthAbbrev(start.month)} – ${end.dayOfMonth} ${monthAbbrev(end.month)}"
-
-private fun dayAbbrev(date: LocalDate): String =
-    date.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-
-private fun monthAbbrev(month: Month): String =
-    month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
 
 private fun monthFullLabel(month: Month): String =
     month.name.lowercase().replaceFirstChar { it.uppercase() }

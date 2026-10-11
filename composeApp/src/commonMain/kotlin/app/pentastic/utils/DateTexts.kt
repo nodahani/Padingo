@@ -64,6 +64,23 @@ class DateTexts(val language: AppLanguage, val calendar: AppCalendar) {
         return "${num(p.day)} ${monthAbbrev(p.month)}"
     }
 
+    /** "Tue, 4 Aug" / "سه‌شنبه، 4 مرداد". */
+    fun dayDateLabel(epochDays: Int): String {
+        val comma = if (isFarsi) "،" else ","
+        return "${weekdayAbbrev(epochDays)}$comma ${dayMonth(epochDays)}"
+    }
+
+    /** "3–9 Aug" / "3 تا 9 مرداد"; a range over two months reads "30 Aug – 2 Sep". */
+    fun rangeLabel(startEpochDays: Int, endEpochDays: Int): String {
+        val start = parts(startEpochDays)
+        val end = parts(endEpochDays)
+        return if (start.month == end.month) {
+            "${joinCompact(num(start.day), num(end.day))} ${monthAbbrev(start.month)}"
+        } else {
+            joinSpaced(dayMonth(startEpochDays), dayMonth(endEpochDays))
+        }
+    }
+
     /**
      * Label for a due range, e.g. "12 Oct", "12–18 Oct", "30 Oct – 2 Nov".
      * The year is only shown when it is not the current one.
