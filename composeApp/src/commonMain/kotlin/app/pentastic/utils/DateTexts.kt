@@ -112,6 +112,49 @@ class DateTexts(val language: AppLanguage, val calendar: AppCalendar) {
     /** "Tue 4 Aug": weekday, day and month, without a comma. */
     fun weekdayDayMonth(epochDays: Int): String = "${weekdayAbbrev(epochDays)} ${dayMonth(epochDays)}"
 
+    /** 12-hour clock: "3:05 PM" in English, "3:05" with the Persian am/pm marks in Persian. */
+    fun time12(hour: Int, minute: Int): String {
+        val hour12 = when {
+            hour == 0 -> 12
+            hour > 12 -> hour - 12
+            else -> hour
+        }
+        val period = if (hour < 12) {
+            if (isFarsi) "\u0642.\u0638" else "AM"
+        } else {
+            if (isFarsi) "\u0628.\u0638" else "PM"
+        }
+        return "${num(hour12)}:${twoDigits(minute)} $period"
+    }
+
+    /** 24-hour clock with two-digit parts: "09:05". */
+    fun time24(hour: Int, minute: Int): String = "${twoDigits(hour)}:${twoDigits(minute)}"
+
+    /** "18 Oct 2026". */
+    fun dayMonthYear(epochDays: Int): String {
+        val p = parts(epochDays)
+        return "${num(p.day)} ${monthAbbrev(p.month)} ${num(p.year)}"
+    }
+
+    /** "18 October 2026". */
+    fun dayMonthYearFull(epochDays: Int): String {
+        val p = parts(epochDays)
+        return "${num(p.day)} ${monthFull(p.month)} ${num(p.year)}"
+    }
+
+    /**
+     * Short label for a reminder: the time when it is today, the day and month when it
+     * is later this year, otherwise just the year.
+     */
+    fun reminderLabel(reminderEpochDays: Int, hour: Int, minute: Int, todayEpochDays: Int): String =
+        when {
+            reminderEpochDays == todayEpochDays -> time12(hour, minute)
+            parts(reminderEpochDays).year == parts(todayEpochDays).year -> dayMonth(reminderEpochDays)
+            else -> num(parts(reminderEpochDays).year)
+        }
+
+    private fun twoDigits(value: Int): String = num(value / 10) + num(value % 10)
+
     private fun monthNames(): List<String> = when {
         isFarsi && isJalali -> FARSI_JALALI_MONTHS
         isFarsi -> FARSI_GREGORIAN_MONTHS

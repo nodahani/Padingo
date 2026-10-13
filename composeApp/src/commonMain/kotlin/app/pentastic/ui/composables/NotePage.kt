@@ -244,17 +244,14 @@ fun NotePage(
         }
 
         // Pre-compute date strings for notes-type grouping (outside LazyColumn scope)
-        val noteDateStrings = remember(list, isNotesType) {
+        val dateTexts = AppTheme.dateTexts
+        val noteDateStrings = remember(list, isNotesType, dateTexts) {
             if (isNotesType) {
                 val timeZone = TimeZone.currentSystemDefault()
                 list.map { note ->
                     val dt = Instant.fromEpochMilliseconds(note.createdAt)
                         .toLocalDateTime(timeZone)
-                    val day = dt.dayOfMonth
-                    val month = dt.month.name.take(3).lowercase()
-                        .replaceFirstChar { it.uppercase() }
-                    val year = dt.year
-                    "$day $month $year"
+                    dateTexts.dayMonthYear(dt.date.toEpochDays().toInt())
                 }
             } else emptyList()
         }
@@ -289,18 +286,10 @@ fun NotePage(
                             )
                         }
 
-                        val timeLabel = remember(note.createdAt) {
+                        val timeLabel = remember(note.createdAt, dateTexts) {
                             val dateTime = Instant.fromEpochMilliseconds(note.createdAt)
                                 .toLocalDateTime(timeZone)
-                            val hour = dateTime.hour
-                            val minute = dateTime.minute
-                            val amPm = if (hour < 12) "AM" else "PM"
-                            val hour12 = when {
-                                hour == 0 -> 12
-                                hour > 12 -> hour - 12
-                                else -> hour
-                            }
-                            "$hour12:${minute.toString().padStart(2, '0')} $amPm"
+                            dateTexts.time12(dateTime.hour, dateTime.minute)
                         }
 
 
@@ -1093,37 +1082,18 @@ internal fun NoteActionsMenu(
     val hasActiveReminder = note.reminderAt > nowMillis && note.reminderEnabled == 1
 
     // Format reminder time for display (only if reminder is in the future)
+    val dateTexts = AppTheme.dateTexts
     val reminderLabel = if (hasActiveReminder) {
         val timeZone = TimeZone.currentSystemDefault()
         val now = Clock.System.now().toLocalDateTime(timeZone)
         val reminderDateTime = Instant.fromEpochMilliseconds(note.reminderAt)
             .toLocalDateTime(timeZone)
-
-        when {
-            // Same day - show time only
-            reminderDateTime.date == now.date -> {
-                val hour = reminderDateTime.hour
-                val minute = reminderDateTime.minute
-                val amPm = if (hour < 12) "AM" else "PM"
-                val hour12 = when {
-                    hour == 0 -> 12
-                    hour > 12 -> hour - 12
-                    else -> hour
-                }
-                "$hour12:${minute.toString().padStart(2, '0')} $amPm"
-            }
-            // Same year - show month and date
-            reminderDateTime.year == now.year -> {
-                val day = reminderDateTime.dayOfMonth
-                val month = reminderDateTime.month.name.take(3).lowercase()
-                    .replaceFirstChar { it.uppercase() }
-                "$day $month"
-            }
-            // Different year - show year only
-            else -> {
-                reminderDateTime.year.toString()
-            }
-        }
+        dateTexts.reminderLabel(
+            reminderEpochDays = reminderDateTime.date.toEpochDays().toInt(),
+            hour = reminderDateTime.hour,
+            minute = reminderDateTime.minute,
+            todayEpochDays = now.date.toEpochDays().toInt(),
+        )
     } else {
         strings.reminder
     }
@@ -1329,12 +1299,11 @@ internal fun RepeatFrequencyDialog(
     var selectedReminderHour by remember { mutableStateOf(initialReminderTime.hour) }
     var selectedReminderMinute by remember { mutableStateOf(initialReminderTime.minute) }
 
+    val dateTexts = AppTheme.dateTexts
+
     // Format selected start date for display
-    val startDateLabel = remember(selectedStartDate) {
-        val day = selectedStartDate.dayOfMonth
-        val month = selectedStartDate.month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-        val year = selectedStartDate.year
-        "$day $month $year"
+    val startDateLabel = remember(selectedStartDate, dateTexts) {
+        dateTexts.dayMonthYear(selectedStartDate.toEpochDays().toInt())
     }
 
     BasicAlertDialog(onDismissRequest = onDismiss) {

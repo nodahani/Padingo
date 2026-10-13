@@ -49,6 +49,7 @@ fun ReminderDialog(
 ) {
     val colors = AppTheme.colors
     val strings = AppTheme.strings
+    val dateTexts = AppTheme.dateTexts
     val timeZone = TimeZone.currentSystemDefault()
     val now = Clock.System.now()
 
@@ -97,14 +98,14 @@ fun ReminderDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "${selectedDate.dayOfMonth} ${formatMonth(selectedDate.monthNumber)} ${selectedDate.year}",
+                        text = dateTexts.dayMonthYearFull(selectedDate.toEpochDays().toInt()),
                         color = colors.primaryText,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "${padZero(selectedHour)}:${padZero(selectedMinute)}",
+                        text = dateTexts.time24(selectedHour, selectedMinute),
                         color = colors.primaryText.copy(alpha = 0.7f),
                         fontSize = 16.sp
                     )
@@ -193,26 +194,4 @@ fun ReminderDialog(
             }
         )
     }
-}
-
-private fun formatMonth(month: Int): String {
-    return when (month) {
-        1 -> "January"
-        2 -> "February"
-        3 -> "March"
-        4 -> "April"
-        5 -> "May"
-        6 -> "June"
-        7 -> "July"
-        8 -> "August"
-        9 -> "September"
-        10 -> "October"
-        11 -> "November"
-        12 -> "December"
-        else -> ""
-    }
-}
-
-private fun padZero(value: Int): String {
-    return if (value < 10) "0$value" else value.toString()
 }
