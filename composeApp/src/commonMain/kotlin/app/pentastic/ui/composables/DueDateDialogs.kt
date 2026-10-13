@@ -44,13 +44,12 @@ import app.pentastic.data.DueDateOption
 import app.pentastic.data.dueValueToLocalDate
 import app.pentastic.data.resolveRange
 import app.pentastic.data.toDueValue
+import app.pentastic.utils.DuePeriods
 import app.pentastic.ui.theme.AppTheme
 import app.pentastic.ui.theme.appRadioButtonColors
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -67,6 +66,9 @@ internal fun DueDateOptionsDialog(
 ) {
     val colors = AppTheme.colors
     val strings = AppTheme.strings
+    val dateTexts = AppTheme.dateTexts
+    val calendar = dateTexts.calendar
+    val periods = remember(calendar) { DuePeriods(calendar) }
     val timeZone = TimeZone.currentSystemDefault()
     val today = remember { Clock.System.now().toLocalDateTime(timeZone).date }
     val hasDueDate = currentDueStartAt != 0L
@@ -79,7 +81,7 @@ internal fun DueDateOptionsDialog(
             hasDueDate -> {
                 val start = dueValueToLocalDate(currentDueStartAt, timeZone)
                 val end = dueValueToLocalDate(currentDueEndAt, timeZone)
-                DueDateOption.entries.firstOrNull { it.resolveRange(today) == start to end }
+                DueDateOption.entries.firstOrNull { it.resolveRange(today, calendar) == start to end }
                     ?: DueDateOption.CUSTOM
             }
 
@@ -97,7 +99,7 @@ internal fun DueDateOptionsDialog(
     // Drill-down toward an optional exact date: year presets go through a months page,
     // week/month presets straight to a days page. Save works at any depth.
     var page by remember { mutableStateOf(DueDatePage.OPTIONS) }
-    var chosenMonth by remember { mutableStateOf<Month?>(null) }
+    var chosenMonth by remember { mutableStateOf<Int?>(null) }
     var chosenDay by remember { mutableStateOf<LocalDate?>(null) }
 
     val onOptionTap: (DueDateOption) -> Unit = { option ->
@@ -105,7 +107,7 @@ internal fun DueDateOptionsDialog(
             // Options with nothing left to refine apply immediately, no Save click needed
             option == DueDateOption.TODAY || option == DueDateOption.TOMORROW -> {
                 selectedOption = option
-                val (start, end) = option.resolveRange(today)!!
+                val (start, end) = option.resolveRange(today, calendar)!!
                 onApply(start.toDueValue(), end.toDueValue())
             }
 
@@ -180,7 +182,7 @@ internal fun DueDateOptionsDialog(
                         DrillPageHeader(title = strings.dueOption(option), onBack = { page = DueDatePage.OPTIONS })
                         Spacer(Modifier.height(16.dp))
 
-                        Month.entries.chunked(3).forEach { rowMonths ->
+                        (1..12).chunked(3).forEach { rowMonths ->
                             Row(modifier = Modifier.fillMaxWidth()) {
                                 rowMonths.forEach { month ->
                                     val selected = chosenMonth == month
@@ -189,7 +191,7 @@ internal fun DueDateOptionsDialog(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = monthLabel(month),
+                                            text = dateTexts.monthAbbrev(month),
                                             fontSize = 15.sp,
                                             color = if (selected) colors.menuBackground else colors.primaryText,
                                             modifier = Modifier
@@ -216,10 +218,10 @@ internal fun DueDateOptionsDialog(
                         // so selectedOption — and chosenMonth in the year flow — are set
                         val option = selectedOption!!
                         val (blockStart, blockEnd) =
-                            if (option.drillsToMonths) monthBlock(option.presetYear(today), chosenMonth!!)
-                            else option.resolveRange(today)!!
+                            if (option.drillsToMonths) periods.monthDates(option.presetYear(today, periods), chosenMonth!!)
+                            else option.resolveRange(today, calendar)!!
                         val title =
-                            if (option.drillsToMonths) "${strings.dueOption(option)} · ${monthLabel(chosenMonth!!)}"
+                            if (option.drillsToMonths) "${strings.dueOption(option)} · ${dateTexts.monthAbbrev(chosenMonth!!)}"
                             else strings.dueOption(option)
                         DrillPageHeader(
                             title = title,
@@ -242,7 +244,7 @@ internal fun DueDateOptionsDialog(
                                 val selected = chosenDay == day
                                 Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
                                     Text(
-                                        text = "${weekDayLabel(day)} ${day.dayOfMonth} ${monthLabel(day.month)}",
+                                        text = dateTexts.weekdayDayMonth(day.toEpochDays().toInt()),
                                         fontSize = 15.sp,
                                         color = if (selected) colors.menuBackground else colors.primaryText,
                                         modifier = Modifier
@@ -277,7 +279,7 @@ internal fun DueDateOptionsDialog(
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 Text(
-                                                    text = "${day.dayOfMonth}",
+                                                    text = dateTexts.num(dateTexts.parts(day.toEpochDays().toInt()).day),
                                                     fontSize = 14.sp,
                                                     color = if (selected) colors.menuBackground else colors.primaryText
                                                 )
@@ -326,9 +328,9 @@ internal fun DueDateOptionsDialog(
                                             val (start, end) = when {
                                                 day != null -> day to day
                                                 option.drillsToMonths && month != null ->
-                                                    monthBlock(option.presetYear(today), month)
+                                                    periods.monthDates(option.presetYear(today, periods), month)
 
-                                                else -> option.resolveRange(today)!!
+                                                else -> option.resolveRange(today, calendar)!!
                                             }
                                             onApply(start.toDueValue(), end.toDueValue())
                                         }
@@ -392,16 +394,10 @@ private val DueDateOption.drillsToDays: Boolean
     get() = this == DueDateOption.THIS_WEEK || this == DueDateOption.NEXT_WEEK ||
             this == DueDateOption.THIS_MONTH || this == DueDateOption.NEXT_MONTH
 
-private fun DueDateOption.presetYear(today: LocalDate): Int =
-    if (this == DueDateOption.NEXT_YEAR) today.year + 1 else today.year
+private fun DueDateOption.presetYear(today: LocalDate, periods: DuePeriods): Int =
+    periods.yearOf(today.toEpochDays().toInt()) + if (this == DueDateOption.NEXT_YEAR) 1 else 0
 
-private fun monthBlock(year: Int, month: Month): Pair<LocalDate, LocalDate> {
-    val first = LocalDate(year, month, 1)
-    return first to first.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
+private fun DuePeriods.monthDates(year: Int, month: Int): Pair<LocalDate, LocalDate> {
+    val (first, last) = monthBlock(year, month)
+    return LocalDate.fromEpochDays(first) to LocalDate.fromEpochDays(last)
 }
-
-private fun monthLabel(month: Month): String =
-    month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-
-private fun weekDayLabel(date: LocalDate): String =
-    date.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }

@@ -49,6 +49,7 @@ import androidx.compose.material3.Icon
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import app.pentastic.data.Note
 import app.pentastic.utils.DateTexts
+import app.pentastic.utils.DuePeriods
 import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.TimelineBucket
 import app.pentastic.data.TimelineSection
@@ -65,7 +66,6 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.isoDayNumber
@@ -141,8 +141,8 @@ fun TimelinePage(modifier: Modifier = Modifier) {
             val grouped = liveNotes
                 .filter { it.repeatFrequency > 0 || (it.hasDueDate && !it.done) }
                 .groupBy {
-                    if (it.repeatFrequency > 0) classifyRepeatTask(it, today, timeZone)
-                    else classifyDueDate(it.dueStartAt, it.dueEndAt, today, timeZone)
+                    if (it.repeatFrequency > 0) classifyRepeatTask(it, today, timeZone, dateTexts.calendar)
+                    else classifyDueDate(it.dueStartAt, it.dueEndAt, today, timeZone, dateTexts.calendar)
                 }
 
             // Same ordering as task pages: priority tasks first, then dragged order (newest first)
@@ -174,8 +174,8 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                 }
                 // Year sections: always this year and next, plus any further year with tasks
                 val years = buildSet {
-                    add(today.year)
-                    add(today.year + 1)
+                    add(dateTexts.parts(today.toEpochDays().toInt()).year)
+                    add(dateTexts.parts(today.toEpochDays().toInt()).year + 1)
                     grouped.keys.filterIsInstance<TimelineBucket.Year>().forEach { add(it.year) }
                 }.sorted()
                 years.forEach { year ->
@@ -206,7 +206,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                 // wait here instead of vanishing until their window opens
                 val repeating = prioritySort(
                     timelineOwnNotes.filter {
-                        it.repeatFrequency > 0 && classifyRepeatTask(it, today, timeZone) == null
+                        it.repeatFrequency > 0 && classifyRepeatTask(it, today, timeZone, dateTexts.calendar) == null
                     }
                 )
                 if (repeating.isNotEmpty()) {
@@ -360,7 +360,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
             localSections = sections
             return@persist
         }
-        val range = timelineSectionDropRange(section.key, today) ?: run {
+        val range = timelineSectionDropRange(section.key, today, dateTexts.calendar) ?: run {
             localSections = sections // defensive: snap back instead of leaving a stale arrangement
             return@persist
         }
@@ -406,7 +406,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                 val isFirst = sectionIndex == 0
                 val notes = sectionUi.notes
                 val isCollapsed = (sectionUi.key in toggledSections) != sectionUi.collapsedByDefault
-                val isDroppable = timelineSectionDropRange(sectionUi.key, today) != null
+                val isDroppable = timelineSectionDropRange(sectionUi.key, today, dateTexts.calendar) != null
                 val sectionStart = taskNumber
                 taskNumber += notes.size
                 item(key = "header_${sectionUi.key}") {
@@ -705,16 +705,13 @@ private fun sectionSubtitle(section: TimelineSection, today: LocalDate, texts: D
         TimelineSection.NEXT_WEEK ->
             range(weekStart.plus(7, DateTimeUnit.DAY), weekStart.plus(13, DateTimeUnit.DAY))
 
-        TimelineSection.THIS_MONTH -> monthFullLabel(today.month)
+        TimelineSection.THIS_MONTH -> texts.monthFull(texts.parts(today.toEpochDays().toInt()).month)
         TimelineSection.NEXT_MONTH ->
-            monthFullLabel(LocalDate(today.year, today.month, 1).plus(1, DateTimeUnit.MONTH).month)
+            texts.monthFull(texts.parts(DuePeriods(texts.calendar).monthRange(today.toEpochDays().toInt(), 1).first).month)
 
         TimelineSection.OVERDUE, TimelineSection.SOMEDAY -> null
     }
 }
-
-private fun monthFullLabel(month: Month): String =
-    month.name.lowercase().replaceFirstChar { it.uppercase() }
 
 private data class NoteLocation(val sectionIdx: Int, val noteIdx: Int)
 
