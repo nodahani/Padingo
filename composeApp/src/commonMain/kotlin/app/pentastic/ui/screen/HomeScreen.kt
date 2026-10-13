@@ -96,14 +96,15 @@ fun HomeScreen(
         today = Clock.System.now().toLocalDateTime(timeZone).date
         onPauseOrDispose { }
     }
-    val timelineUrgent = remember(notesByPage, pages, subPagesByParent, timelinePage, today) {
+    val calendar = AppTheme.calendar
+    val timelineUrgent = remember(notesByPage, pages, subPagesByParent, timelinePage, today, calendar) {
         val livePageIds = buildSet {
             pages.forEach { add(it.id) }
             subPagesByParent.values.forEach { subs -> subs.forEach { add(it.id) } }
             timelinePage?.let { add(it.id) }
         }
         timelineUrgentNotes(
-            notesByPage.filterKeys { it in livePageIds }.values.flatten(), today, timeZone
+            notesByPage.filterKeys { it in livePageIds }.values.flatten(), today, timeZone, calendar
         )
     }
     val timelineNotesCount = timelineUrgent.size

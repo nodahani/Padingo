@@ -109,6 +109,9 @@ class DateTexts(val language: AppLanguage, val calendar: AppCalendar) {
         }
     }
 
+    /** "Tue 4 Aug": weekday, day and month, without a comma. */
+    fun weekdayDayMonth(epochDays: Int): String = "${weekdayAbbrev(epochDays)} ${dayMonth(epochDays)}"
+
     private fun monthNames(): List<String> = when {
         isFarsi && isJalali -> FARSI_JALALI_MONTHS
         isFarsi -> FARSI_GREGORIAN_MONTHS

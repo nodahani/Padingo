@@ -11,6 +11,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import app.pentastic.utils.nextRepeatDate
 import app.pentastic.utils.DateTexts
+import app.pentastic.utils.DuePeriods
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -35,21 +36,28 @@ enum class DueDateOption(val label: String) {
  * Resolves a preset to its full calendar block (weeks are Mon-Sun, weekend is Sat-Sun),
  * even if the block started before [today]. Null for SOMEDAY and CUSTOM.
  */
-fun DueDateOption.resolveRange(today: LocalDate): Pair<LocalDate, LocalDate>? {
+fun DueDateOption.resolveRange(
+    today: LocalDate,
+    calendar: AppCalendar = AppCalendar.GREGORIAN,
+): Pair<LocalDate, LocalDate>? {
     val weekStart = today.minus(today.dayOfWeek.isoDayNumber - 1, DateTimeUnit.DAY)
-    val monthStart = LocalDate(today.year, today.month, 1)
+    val periods = DuePeriods(calendar)
+    val todayDays = today.toEpochDays().toInt()
     return when (this) {
         DueDateOption.TODAY -> today to today
         DueDateOption.TOMORROW -> today.plus(1, DateTimeUnit.DAY).let { it to it }
         DueDateOption.THIS_WEEK -> weekStart to weekStart.plus(6, DateTimeUnit.DAY)
         DueDateOption.NEXT_WEEK -> weekStart.plus(7, DateTimeUnit.DAY) to weekStart.plus(13, DateTimeUnit.DAY)
-        DueDateOption.THIS_MONTH -> monthStart to monthStart.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
-        DueDateOption.NEXT_MONTH -> monthStart.plus(1, DateTimeUnit.MONTH) to monthStart.plus(2, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
-        DueDateOption.THIS_YEAR -> LocalDate(today.year, 1, 1) to LocalDate(today.year, 12, 31)
-        DueDateOption.NEXT_YEAR -> LocalDate(today.year + 1, 1, 1) to LocalDate(today.year + 1, 12, 31)
+        DueDateOption.THIS_MONTH -> periods.monthRange(todayDays, 0).toDates()
+        DueDateOption.NEXT_MONTH -> periods.monthRange(todayDays, 1).toDates()
+        DueDateOption.THIS_YEAR -> periods.yearRange(todayDays, 0).toDates()
+        DueDateOption.NEXT_YEAR -> periods.yearRange(todayDays, 1).toDates()
         DueDateOption.SOMEDAY, DueDateOption.CUSTOM -> null
     }
 }
+
+private fun Pair<Int, Int>.toDates(): Pair<LocalDate, LocalDate> =
+    LocalDate.fromEpochDays(first) to LocalDate.fromEpochDays(second)
 
 /**
  * Due dates are stored as epoch days: a plain calendar date that never shifts when
@@ -121,51 +129,18 @@ fun classifyDueDate(
     dueEndAt: Long,
     today: LocalDate,
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
+    calendar: AppCalendar = AppCalendar.GREGORIAN,
 ): TimelineBucket? {
     if (dueStartAt == 0L) return null
     if (dueStartAt == DUE_SOMEDAY) return TimelineBucket.Section(TimelineSection.SOMEDAY)
 
     val start = dueValueToLocalDate(dueStartAt, timeZone)
     val end = dueValueToLocalDate(dueEndAt, timeZone)
-    val weekStart = today.minus(today.dayOfWeek.isoDayNumber - 1, DateTimeUnit.DAY)
-    val monthStart = LocalDate(today.year, today.month, 1)
-    val thisMonthEnd = monthStart.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
-    val nextMonthEnd = monthStart.plus(2, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
-
-    if (end < today) return TimelineBucket.Section(TimelineSection.OVERDUE)
-
-    // Whole calendar blocks keep their period's section until they lapse, instead of
-    // migrating into Today/Tomorrow as the period closes (e.g. "This week" on a Sunday)
-    val isWeekBlock = start.dayOfWeek.isoDayNumber == 1 && end == start.plus(6, DateTimeUnit.DAY)
-    val isWeekendBlock = start.dayOfWeek.isoDayNumber == 6 && end == start.plus(1, DateTimeUnit.DAY)
-    if (isWeekBlock || isWeekendBlock) {
-        val blockWeekStart = if (isWeekBlock) start else start.minus(5, DateTimeUnit.DAY)
-        if (blockWeekStart == weekStart) {
-            return TimelineBucket.Section(
-                if (isWeekendBlock) TimelineSection.THIS_WEEKEND else TimelineSection.THIS_WEEK
-            )
-        }
-        if (blockWeekStart == weekStart.plus(7, DateTimeUnit.DAY)) return TimelineBucket.Section(TimelineSection.NEXT_WEEK)
-    }
-    val isMonthBlock = start.dayOfMonth == 1 &&
-            end == LocalDate(start.year, start.month, 1).plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
-    if (isMonthBlock) {
-        if (start == monthStart) return TimelineBucket.Section(TimelineSection.THIS_MONTH)
-        if (start == monthStart.plus(1, DateTimeUnit.MONTH)) return TimelineBucket.Section(TimelineSection.NEXT_MONTH)
-    }
-    val isYearBlock = start == LocalDate(start.year, 1, 1) && end == LocalDate(start.year, 12, 31)
-    if (isYearBlock) return TimelineBucket.Year(end.year)
-
-    return when {
-        end == today -> TimelineBucket.Section(TimelineSection.TODAY)
-        end == today.plus(1, DateTimeUnit.DAY) -> TimelineBucket.Section(TimelineSection.TOMORROW)
-        end <= weekStart.plus(4, DateTimeUnit.DAY) -> TimelineBucket.Section(TimelineSection.THIS_WEEK)
-        end <= weekStart.plus(6, DateTimeUnit.DAY) -> TimelineBucket.Section(TimelineSection.THIS_WEEKEND)
-        end <= weekStart.plus(13, DateTimeUnit.DAY) -> TimelineBucket.Section(TimelineSection.NEXT_WEEK)
-        end <= thisMonthEnd -> TimelineBucket.Section(TimelineSection.THIS_MONTH)
-        end <= nextMonthEnd -> TimelineBucket.Section(TimelineSection.NEXT_MONTH)
-        else -> TimelineBucket.Year(end.year)
-    }
+    return DuePeriods(calendar).classify(
+        startDays = start.toEpochDays().toInt(),
+        endDays = end.toEpochDays().toInt(),
+        todayDays = today.toEpochDays().toInt(),
+    )
 }
 
 /**
@@ -200,6 +175,7 @@ fun classifyRepeatTask(
     note: Note,
     today: LocalDate,
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
+    calendar: AppCalendar = AppCalendar.GREGORIAN,
 ): TimelineBucket? {
     val frequency = RepeatFrequency.fromOrdinal(note.repeatFrequency)
     val occurrence = note.repeatOccurrenceDate(today, timeZone) ?: return null
@@ -218,7 +194,7 @@ fun classifyRepeatTask(
     // hasn't flipped it yet — it belongs in Today
     val effective = if (occurrence < today) today else occurrence
     val effectiveValue = effective.toDueValue()
-    return classifyDueDate(effectiveValue, effectiveValue, today, timeZone)
+    return classifyDueDate(effectiveValue, effectiveValue, today, timeZone, calendar)
 }
 
 /**
@@ -231,11 +207,12 @@ fun timelineUrgentNotes(
     notes: List<Note>,
     today: LocalDate,
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
+    calendar: AppCalendar = AppCalendar.GREGORIAN,
 ): List<Note> = notes.filter { note ->
     if (note.done) return@filter false
     val bucket = when {
-        note.repeatFrequency > 0 -> classifyRepeatTask(note, today, timeZone)
-        note.hasDueDate -> classifyDueDate(note.dueStartAt, note.dueEndAt, today, timeZone)
+        note.repeatFrequency > 0 -> classifyRepeatTask(note, today, timeZone, calendar)
+        note.hasDueDate -> classifyDueDate(note.dueStartAt, note.dueEndAt, today, timeZone, calendar)
         else -> null
     }
     bucket == TimelineBucket.Section(TimelineSection.TODAY) ||
@@ -251,11 +228,13 @@ fun timelineUrgentNotes(
 fun timelineSectionDropRange(
     sectionKey: String,
     today: LocalDate,
+    calendar: AppCalendar = AppCalendar.GREGORIAN,
 ): Pair<Long, Long>? {
     if (sectionKey == TimelineSection.SOMEDAY.name) return DUE_SOMEDAY to DUE_SOMEDAY
     if (sectionKey.startsWith("YEAR_")) {
         val year = sectionKey.removePrefix("YEAR_").toIntOrNull() ?: return null
-        return LocalDate(year, 1, 1).toDueValue() to LocalDate(year, 12, 31).toDueValue()
+        val (first, last) = DuePeriods(calendar).yearBlock(year)
+        return first.toLong() to last.toLong()
     }
     val section = TimelineSection.entries.firstOrNull { it.name == sectionKey } ?: return null
     val range = when (section) {
@@ -269,8 +248,8 @@ fun timelineSectionDropRange(
         }
 
         TimelineSection.NEXT_WEEK -> DueDateOption.NEXT_WEEK.resolveRange(today)!!
-        TimelineSection.THIS_MONTH -> DueDateOption.THIS_MONTH.resolveRange(today)!!
-        TimelineSection.NEXT_MONTH -> DueDateOption.NEXT_MONTH.resolveRange(today)!!
+        TimelineSection.THIS_MONTH -> DueDateOption.THIS_MONTH.resolveRange(today, calendar)!!
+        TimelineSection.NEXT_MONTH -> DueDateOption.NEXT_MONTH.resolveRange(today, calendar)!!
         TimelineSection.OVERDUE, TimelineSection.SOMEDAY -> return null
     }
     return range.first.toDueValue() to range.second.toDueValue()
