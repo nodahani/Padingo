@@ -98,6 +98,7 @@ interface AppStrings {
     val timelineEmpty: String
     val setReminder: String
     val changeDateTime: String
+    val tapToEditRepeat: String
     val enabled: String
     val remove: String
     val selectDate: String
@@ -122,6 +123,7 @@ interface AppStrings {
     fun dueOption(option: DueDateOption): String
     fun timelineSection(section: TimelineSection): String
     fun repeatFrequency(frequency: RepeatFrequency): String
+    fun repeatingTaskInfo(frequency: RepeatFrequency): String
 }
 
 object EnglishStrings : AppStrings {
@@ -216,6 +218,7 @@ object EnglishStrings : AppStrings {
         "Nothing scheduled yet.\n\nAdd a task below, or open any task's menu and set a due date — it will show up here."
     override val setReminder = "Set Reminder"
     override val changeDateTime = "Change date & time"
+    override val tapToEditRepeat = "Tap to edit repeat settings"
     override val enabled = "Enabled"
     override val remove = "Remove"
     override val selectDate = "Select date"
@@ -286,6 +289,9 @@ object EnglishStrings : AppStrings {
         RepeatFrequency.QUARTERLY -> "Quarterly"
         RepeatFrequency.YEARLY -> "Yearly"
     }
+
+    override fun repeatingTaskInfo(frequency: RepeatFrequency) =
+        "This is a ${repeatFrequency(frequency).lowercase()} repeating task"
 }
 
 object FarsiStrings : AppStrings {
@@ -380,6 +386,7 @@ object FarsiStrings : AppStrings {
         "هنوز چیزی برنامه‌ریزی نشده.\n\nپایین یک کار اضافه کن، یا منوی هر کار را باز کن و تاریخ سررسید بگذار؛ اینجا نمایش داده می‌شود."
     override val setReminder = "تنظیم یادآور"
     override val changeDateTime = "تغییر تاریخ و زمان"
+    override val tapToEditRepeat = "برای تغییر تنظیمات تکرار ضربه بزنید"
     override val enabled = "فعال"
     override val remove = "برداشتن"
     override val selectDate = "انتخاب تاریخ"
@@ -450,6 +457,9 @@ object FarsiStrings : AppStrings {
         RepeatFrequency.QUARTERLY -> "سه‌ماهه"
         RepeatFrequency.YEARLY -> "سالانه"
     }
+
+    override fun repeatingTaskInfo(frequency: RepeatFrequency) =
+        "این یک کار ${repeatFrequency(frequency)} است"
 }
 
 fun stringsFor(language: AppLanguage): AppStrings = when (language) {

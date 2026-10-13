@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.pentastic.data.AppCalendar
 import app.pentastic.data.RepeatFrequency
 import app.pentastic.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -65,6 +66,7 @@ fun DateTimePickerDialog(
     onOpenRepeatDialog: () -> Unit = {},
 ) {
     val colors = AppTheme.colors
+    val strings = AppTheme.strings
 
     var selectedDate by remember { mutableStateOf(initialDate) }
     var selectedHour by remember { mutableStateOf(initialHour) }
@@ -90,7 +92,7 @@ fun DateTimePickerDialog(
             Column(modifier = Modifier.padding(24.dp)) {
                 // Title
                 Text(
-                    text = "Set reminder",
+                    text = strings.setReminder,
                     color = colors.primaryText,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp
@@ -115,13 +117,13 @@ fun DateTimePickerDialog(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "This is a ${repeatFrequency.label.lowercase()} repeating task",
+                                text = strings.repeatingTaskInfo(repeatFrequency),
                                 color = colors.primaryText,
                                 fontSize = 14.sp
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
-                                text = "Tap to edit repeat settings",
+                                text = strings.tapToEditRepeat,
                                 color = colors.primaryText.copy(alpha = 0.6f),
                                 fontSize = 12.sp
                             )
@@ -173,7 +175,7 @@ fun DateTimePickerDialog(
                             onClear()
                             onDismiss()
                         }) {
-                            Text("Clear", color = colors.primaryText.copy(alpha = 0.6f))
+                            Text(strings.clear, color = colors.primaryText.copy(alpha = 0.6f))
                         }
                     } else {
                         Spacer(Modifier.width(1.dp))
@@ -181,7 +183,7 @@ fun DateTimePickerDialog(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         TextButton(onClick = onDismiss) {
-                            Text("Cancel", color = colors.primaryText)
+                            Text(strings.cancel, color = colors.primaryText)
                         }
                         Spacer(Modifier.width(8.dp))
                         Button(
@@ -197,7 +199,7 @@ fun DateTimePickerDialog(
                             ),
                             shape = RoundedCornerShape(20.dp)
                         ) {
-                            Text("Done")
+                            Text(strings.done)
                         }
                     }
                 }
@@ -213,6 +215,7 @@ private fun CompactTimePicker(
     onTimeSelected: (hour: Int, minute: Int) -> Unit,
 ) {
     val colors = AppTheme.colors
+    val dateTexts = AppTheme.dateTexts
 
     // Convert 24-hour to 12-hour format
     val isAm = selectedHour < 12
@@ -264,13 +267,12 @@ private fun CompactTimePicker(
 
         // AM/PM picker
         WheelPickerGeneric(
-            items = listOf("AM", "PM"),
-            selectedItem = if (isAm) "AM" else "PM",
-            onItemSelected = { amPm ->
-                val newIsAm = amPm == "AM"
+            items = listOf(true, false),
+            selectedItem = isAm,
+            onItemSelected = { newIsAm ->
                 onTimeSelected(toHour24(hour12, newIsAm), selectedMinute)
             },
-            format = { it },
+            format = { dateTexts.amPm(it) },
             itemWidth = 52.dp
         )
     }
@@ -389,6 +391,10 @@ private fun DateWheelPicker(
     onDateSelected: (LocalDate) -> Unit,
 ) {
     val colors = AppTheme.colors
+    val dateTexts = AppTheme.dateTexts
+    // The wheel is still Gregorian until the picker follows the calendar setting,
+    // so month names stay Gregorian, written in the active language
+    val monthNames = remember(dateTexts.language) { DateTexts(dateTexts.language, AppCalendar.GREGORIAN) }
     val today = remember {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     }
@@ -443,7 +449,7 @@ private fun DateWheelPicker(
             items = months,
             selectedItem = selectedMonth,
             onItemSelected = { selectedMonth = it },
-            format = { formatMonthShort(it) },
+            format = { monthNames.monthAbbrev(it.ordinal + 1) },
             itemWidth = 72.dp
         )
 
@@ -583,22 +589,6 @@ private fun isLeapYear(year: Int): Boolean {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
 }
 
-private fun formatMonthShort(month: Month): String {
-    return when (month) {
-        Month.JANUARY -> "Jan"
-        Month.FEBRUARY -> "Feb"
-        Month.MARCH -> "Mar"
-        Month.APRIL -> "Apr"
-        Month.MAY -> "May"
-        Month.JUNE -> "Jun"
-        Month.JULY -> "Jul"
-        Month.AUGUST -> "Aug"
-        Month.SEPTEMBER -> "Sep"
-        Month.OCTOBER -> "Oct"
-        Month.NOVEMBER -> "Nov"
-        Month.DECEMBER -> "Dec"
-    }
-}
 
 private fun padZero(value: Int): String {
     return if (value < 10) "0$value" else value.toString()
