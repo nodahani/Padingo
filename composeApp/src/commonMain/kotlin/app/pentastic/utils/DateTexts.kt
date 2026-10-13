@@ -112,19 +112,22 @@ class DateTexts(val language: AppLanguage, val calendar: AppCalendar) {
     /** "Tue 4 Aug": weekday, day and month, without a comma. */
     fun weekdayDayMonth(epochDays: Int): String = "${weekdayAbbrev(epochDays)} ${dayMonth(epochDays)}"
 
-    /** 12-hour clock: "3:05 PM" in English, "3:05" with the Persian am/pm marks in Persian. */
+    /** The half-day marker on its own: "AM"/"PM" in English, "ق.ظ"/"ب.ظ" in Persian. */
+    fun amPm(isAm: Boolean): String =
+        if (isAm) {
+            if (isFarsi) "\u0642.\u0638" else "AM"
+        } else {
+            if (isFarsi) "\u0628.\u0638" else "PM"
+        }
+
+    /** 12-hour clock: "3:05 PM" in English, "3:05 ق.ظ" in Persian. */
     fun time12(hour: Int, minute: Int): String {
         val hour12 = when {
             hour == 0 -> 12
             hour > 12 -> hour - 12
             else -> hour
         }
-        val period = if (hour < 12) {
-            if (isFarsi) "\u0642.\u0638" else "AM"
-        } else {
-            if (isFarsi) "\u0628.\u0638" else "PM"
-        }
-        return "${num(hour12)}:${twoDigits(minute)} $period"
+        return "${num(hour12)}:${twoDigits(minute)} ${amPm(hour < 12)}"
     }
 
     /** 24-hour clock with two-digit parts: "09:05". */
