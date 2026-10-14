@@ -24,6 +24,7 @@ object DatastoreKeys {
     val SHOW_SUB_PAGES = booleanPreferencesKey("show_sub_pages")
     val LANGUAGE = intPreferencesKey("language")
     val CALENDAR = intPreferencesKey("calendar")
+    val WEEK_START = intPreferencesKey("week_start")
 }
 
 class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
@@ -127,6 +128,17 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun saveCalendar(calendar: Int) {
         dataStore.edit { settings ->
             settings[DatastoreKeys.CALENDAR] = calendar
+        }
+    }
+
+    /** Null until the user picks one; callers fall back to a language-aware default. */
+    val weekStart: Flow<Int?> = dataStore.data.map { preferences ->
+        preferences[DatastoreKeys.WEEK_START]
+    }
+
+    suspend fun saveWeekStart(weekStart: Int) {
+        dataStore.edit { settings ->
+            settings[DatastoreKeys.WEEK_START] = weekStart
         }
     }
 }

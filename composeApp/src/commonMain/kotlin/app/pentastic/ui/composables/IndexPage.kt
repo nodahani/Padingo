@@ -94,6 +94,7 @@ import androidx.compose.ui.unit.sp
 import app.pentastic.data.Page
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.AppCalendar
+import app.pentastic.data.WeekStart
 import app.pentastic.data.PageType
 import app.pentastic.data.ThemeMode
 import app.pentastic.ui.theme.AppTheme
@@ -1265,6 +1266,62 @@ fun CalendarSelectionDialog(
                     }
                     Button(
                         onClick = { onConfirm(selectedCalendar) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.primaryText,
+                            contentColor = colors.menuBackground
+                        )
+                    ) {
+                        Text(strings.save)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun WeekStartSelectionDialog(
+    currentWeekStart: WeekStart,
+    onDismiss: () -> Unit,
+    onConfirm: (WeekStart) -> Unit,
+) {
+    var selectedWeekStart by remember { mutableStateOf(currentWeekStart) }
+    val colors = colors
+    val strings = AppTheme.strings
+
+    BasicAlertDialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = colors.menuBackground,
+            shadowElevation = 8.dp,
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(strings.weekStart, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
+                Spacer(Modifier.height(16.dp))
+                WeekStart.entries.forEach { weekStart ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { selectedWeekStart = weekStart }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        RadioButton(
+                            selected = selectedWeekStart == weekStart,
+                            onClick = { selectedWeekStart = weekStart },
+                            colors = appRadioButtonColors(),
+                        )
+                        Text(text = strings.weekStartName(weekStart), color = colors.primaryText)
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    TextButton(onClick = onDismiss) {
+                        Text(strings.cancel, color = colors.primaryText)
+                    }
+                    Button(
+                        onClick = { onConfirm(selectedWeekStart) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors.primaryText,
                             contentColor = colors.menuBackground

@@ -53,6 +53,7 @@ import app.pentastic.utils.DuePeriods
 import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.TimelineBucket
 import app.pentastic.data.TimelineSection
+import app.pentastic.data.WeekStart
 import app.pentastic.data.classifyDueDate
 import app.pentastic.data.classifyRepeatTask
 import app.pentastic.data.epochMillisToLocalDate
@@ -88,6 +89,7 @@ import kotlin.time.ExperimentalTime
 fun TimelinePage(modifier: Modifier = Modifier) {
     val colors = AppTheme.colors
     val dateTexts = AppTheme.dateTexts
+    val weekStart = AppTheme.weekStart
     val strings = AppTheme.strings
     val viewModel = koinViewModel<MainViewModel>()
     val notesByPage by viewModel.notesByPage.collectAsState()
@@ -128,7 +130,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
     ) { mutableStateOf(setOf<String>()) }
 
     val sections: List<TimelineSectionUi> =
-        remember(notesByPage, pages, subPagesByParent, timelinePage, today, dateTexts, strings) {
+        remember(notesByPage, pages, subPagesByParent, timelinePage, today, dateTexts, weekStart, strings) {
             // Live (non-deleted, non-archived) pages = root pages + their sub-pages + the Timeline page itself
             val livePageIds = buildSet {
                 pages.forEach { add(it.id) }
@@ -141,8 +143,8 @@ fun TimelinePage(modifier: Modifier = Modifier) {
             val grouped = liveNotes
                 .filter { it.repeatFrequency > 0 || (it.hasDueDate && !it.done) }
                 .groupBy {
-                    if (it.repeatFrequency > 0) classifyRepeatTask(it, today, timeZone, dateTexts.calendar)
-                    else classifyDueDate(it.dueStartAt, it.dueEndAt, today, timeZone, dateTexts.calendar)
+                    if (it.repeatFrequency > 0) classifyRepeatTask(it, today, timeZone, dateTexts.calendar, weekStart)
+                    else classifyDueDate(it.dueStartAt, it.dueEndAt, today, timeZone, dateTexts.calendar, weekStart)
                 }
 
             // Same ordering as task pages: priority tasks first, then dragged order (newest first)
@@ -150,8 +152,12 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                 notes.sortedWith(compareByDescending<Note> { it.priority }.thenByDescending { it.orderAt })
 
             // Sections up to This weekend start expanded, the rest collapsed —
-            // except on weekends, when the imminent Next week starts expanded too
-            val isWeekendToday = today.dayOfWeek.isoDayNumber >= 6
+            // except on weekends, when the imminent Next week starts expanded too.
+            // The weekend is the last two days of the user's week (Thu/Fri for a
+            // Saturday start, Sat/Sun for a Monday start)
+            val weekendStartIso = (weekStart.isoWeekday + 4) % 7 + 1
+            val isWeekendToday = today.dayOfWeek.isoDayNumber == weekendStartIso ||
+                    today.dayOfWeek.isoDayNumber == weekendStartIso % 7 + 1
 
             buildList {
                 TimelineSection.entries.filter { it != TimelineSection.SOMEDAY }.forEach { section ->
@@ -162,7 +168,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                         TimelineSectionUi(
                             key = section.name,
                             label = strings.timelineSection(section),
-                            subtitle = sectionSubtitle(section, today,dateTexts),
+                            subtitle = sectionSubtitle(section, today, dateTexts, weekStart),
                             notes = sectionNotes,
                             collapsedByDefault = when {
                                 section.ordinal <= TimelineSection.THIS_WEEKEND.ordinal -> false
@@ -206,7 +212,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                 // wait here instead of vanishing until their window opens
                 val repeating = prioritySort(
                     timelineOwnNotes.filter {
-                        it.repeatFrequency > 0 && classifyRepeatTask(it, today, timeZone, dateTexts.calendar) == null
+                        it.repeatFrequency > 0 && classifyRepeatTask(it, today, timeZone, dateTexts.calendar, weekStart) == null
                     }
                 )
                 if (repeating.isNotEmpty()) {
@@ -360,7 +366,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
             localSections = sections
             return@persist
         }
-        val range = timelineSectionDropRange(section.key, today, dateTexts.calendar) ?: run {
+        val range = timelineSectionDropRange(section.key, today, dateTexts.calendar, weekStart) ?: run {
             localSections = sections // defensive: snap back instead of leaving a stale arrangement
             return@persist
         }
@@ -406,7 +412,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                 val isFirst = sectionIndex == 0
                 val notes = sectionUi.notes
                 val isCollapsed = (sectionUi.key in toggledSections) != sectionUi.collapsedByDefault
-                val isDroppable = timelineSectionDropRange(sectionUi.key, today, dateTexts.calendar) != null
+                val isDroppable = timelineSectionDropRange(sectionUi.key, today, dateTexts.calendar, weekStart) != null
                 val sectionStart = taskNumber
                 taskNumber += notes.size
                 item(key = "header_${sectionUi.key}") {
@@ -689,25 +695,37 @@ private fun TimelineEmptyState(today: LocalDate) {
 }
 
 /** Light-grey date context shown next to a section title, e.g. "Tue, 4 Aug" or "3–9 Aug". */
-private fun sectionSubtitle(section: TimelineSection, today: LocalDate, texts: DateTexts): String? {
+private fun sectionSubtitle(
+    section: TimelineSection,
+    today: LocalDate,
+    texts: DateTexts,
+    weekStart: WeekStart,
+): String? {
     fun day(date: LocalDate) = texts.dayDateLabel(date.toEpochDays().toInt())
     fun range(start: LocalDate, end: LocalDate) =
         texts.rangeLabel(start.toEpochDays().toInt(), end.toEpochDays().toInt())
 
-    val weekStart = today.minus(today.dayOfWeek.isoDayNumber - 1, DateTimeUnit.DAY)
+    val weekStartDay = today.minus(
+        (today.dayOfWeek.isoDayNumber - weekStart.isoWeekday + 7) % 7,
+        DateTimeUnit.DAY
+    )
     return when (section) {
         TimelineSection.TODAY -> day(today)
         TimelineSection.TOMORROW -> day(today.plus(1, DateTimeUnit.DAY))
-        TimelineSection.THIS_WEEK -> range(weekStart, weekStart.plus(6, DateTimeUnit.DAY))
+        TimelineSection.THIS_WEEK -> range(weekStartDay, weekStartDay.plus(6, DateTimeUnit.DAY))
         TimelineSection.THIS_WEEKEND ->
-            range(weekStart.plus(5, DateTimeUnit.DAY), weekStart.plus(6, DateTimeUnit.DAY))
+            range(weekStartDay.plus(5, DateTimeUnit.DAY), weekStartDay.plus(6, DateTimeUnit.DAY))
 
         TimelineSection.NEXT_WEEK ->
-            range(weekStart.plus(7, DateTimeUnit.DAY), weekStart.plus(13, DateTimeUnit.DAY))
+            range(weekStartDay.plus(7, DateTimeUnit.DAY), weekStartDay.plus(13, DateTimeUnit.DAY))
 
         TimelineSection.THIS_MONTH -> texts.monthFull(texts.parts(today.toEpochDays().toInt()).month)
         TimelineSection.NEXT_MONTH ->
-            texts.monthFull(texts.parts(DuePeriods(texts.calendar).monthRange(today.toEpochDays().toInt(), 1).first).month)
+            texts.monthFull(
+                texts.parts(
+                    DuePeriods(texts.calendar, weekStart).monthRange(today.toEpochDays().toInt(), 1).first
+                ).month
+            )
 
         TimelineSection.OVERDUE, TimelineSection.SOMEDAY -> null
     }

@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.ui.composables.CalendarSelectionDialog
+import app.pentastic.ui.composables.WeekStartSelectionDialog
 import app.pentastic.ui.composables.ThemeSelectionDialog
 import app.pentastic.ui.composables.LanguageSelectionDialog
 import app.pentastic.ui.theme.AppTheme
@@ -72,6 +73,9 @@ fun SettingsScreen(
 
     val calendar by viewModel.calendar.collectAsState()
     var showCalendarDialog by remember { mutableStateOf(false) }
+
+    val weekStart by viewModel.weekStart.collectAsState()
+    var showWeekStartDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -127,6 +131,19 @@ fun SettingsScreen(
             trailing = {
                 Text(
                     text = strings.calendarLabel(calendar),
+                    fontSize = 14.sp,
+                    color = colors.hint,
+                )
+            }
+        )
+
+        SettingsItem(
+            icon = { Icon(Icons.Default.ViewWeek, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
+            title = strings.weekStart,
+            onClick = { showWeekStartDialog = true },
+            trailing = {
+                Text(
+                    text = strings.weekStartName(weekStart),
                     fontSize = 14.sp,
                     color = colors.hint,
                 )
@@ -205,6 +222,17 @@ fun SettingsScreen(
             onConfirm = { selectedCalendar ->
                 viewModel.setCalendar(selectedCalendar)
                 showCalendarDialog = false
+            }
+        )
+    }
+
+    if (showWeekStartDialog) {
+        WeekStartSelectionDialog(
+            currentWeekStart = weekStart,
+            onDismiss = { showWeekStartDialog = false },
+            onConfirm = { selectedWeekStart ->
+                viewModel.setWeekStart(selectedWeekStart)
+                showWeekStartDialog = false
             }
         )
     }

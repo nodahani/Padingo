@@ -7,6 +7,7 @@ import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.TimelineSection
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.ThemeMode
+import app.pentastic.data.WeekStart
 import app.pentastic.utils.withFarsiDigits
 
 interface AppStrings {
@@ -111,6 +112,9 @@ interface AppStrings {
     // Calendar
     val calendar: String
 
+    // Week
+    val weekStart: String
+
     // Dates
     val someday: String
 
@@ -121,6 +125,7 @@ interface AppStrings {
     fun completedTasks(count: Int): String
     fun moveCompletedMessage(count: Int): String
     fun calendarLabel(calendar: AppCalendar): String
+    fun weekStartName(start: WeekStart): String
     fun dueOption(option: DueDateOption): String
     fun timelineSection(section: TimelineSection): String
     fun repeatFrequency(frequency: RepeatFrequency): String
@@ -232,6 +237,9 @@ object EnglishStrings : AppStrings {
     // Calendar
     override val calendar = "Calendar"
 
+    // Week
+    override val weekStart = "Start of week"
+
     // Dates
     override val someday = "Someday"
 
@@ -255,6 +263,12 @@ object EnglishStrings : AppStrings {
     override fun calendarLabel(calendar: AppCalendar) = when (calendar) {
         AppCalendar.GREGORIAN -> "Gregorian"
         AppCalendar.JALALI -> "Jalali (Persian)"
+    }
+
+    override fun weekStartName(start: WeekStart) = when (start) {
+        WeekStart.SATURDAY -> "Saturday"
+        WeekStart.SUNDAY -> "Sunday"
+        WeekStart.MONDAY -> "Monday"
     }
 
     override fun dueOption(option: DueDateOption) = when (option) {
@@ -400,6 +414,9 @@ object FarsiStrings : AppStrings {
     // Calendar
     override val calendar = "تقویم"
 
+    // Week
+    override val weekStart = "روز شروع هفته"
+
     // Dates
     override val someday = "بعداً"
 
@@ -423,6 +440,12 @@ object FarsiStrings : AppStrings {
     override fun calendarLabel(calendar: AppCalendar) = when (calendar) {
         AppCalendar.GREGORIAN -> "میلادی"
         AppCalendar.JALALI -> "شمسی"
+    }
+
+    override fun weekStartName(start: WeekStart) = when (start) {
+        WeekStart.SATURDAY -> "شنبه"
+        WeekStart.SUNDAY -> "یکشنبه"
+        WeekStart.MONDAY -> "دوشنبه"
     }
 
     override fun dueOption(option: DueDateOption) = when (option) {

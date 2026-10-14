@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.AppLanguage
+import app.pentastic.data.WeekStart
 import app.pentastic.data.DataStoreRepository
 import app.pentastic.data.ThemeMode
 import app.pentastic.nav.SetupNavGraph
@@ -26,7 +27,12 @@ fun App() {
     val calendarOrdinal by dataStoreRepository.calendar.collectAsState(initial = AppCalendar.GREGORIAN.ordinal)
     val calendar = AppCalendar.fromOrdinal(calendarOrdinal)
 
-    AppTheme(themeMode = themeMode, language = language, calendar = calendar) {
+    // Unset preference falls back by language: Saturday for Farsi, Monday otherwise
+    val weekStartPref by dataStoreRepository.weekStart.collectAsState(initial = null)
+    val weekStart = weekStartPref?.let { WeekStart.fromOrdinal(it) }
+        ?: if (language == AppLanguage.FARSI) WeekStart.SATURDAY else WeekStart.MONDAY
+
+    AppTheme(themeMode = themeMode, language = language, calendar = calendar, weekStart = weekStart) {
         val navController = rememberNavController()
         SetupNavGraph(navController = navController)
     }

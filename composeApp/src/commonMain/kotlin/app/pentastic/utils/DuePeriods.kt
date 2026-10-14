@@ -3,6 +3,7 @@ package app.pentastic.utils
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.TimelineBucket
 import app.pentastic.data.TimelineSection
+import app.pentastic.data.WeekStart
 
 /**
  * Month and year logic for due dates, in either calendar, on plain epoch days
@@ -10,9 +11,19 @@ import app.pentastic.data.TimelineSection
  *
  * Everything here is pure Int arithmetic so it can be tested without a date library.
  * Ranges are returned as (first day, last day), both inclusive.
+ *
+ * Weeks run from [weekStart] (Monday by default, Saturday for a Farsi week), and
+ * the weekend is the LAST TWO days of that week — so a Saturday-start week has a
+ * Thu/Fri weekend, a Monday-start week a Sat/Sun one.
  */
-class DuePeriods(calendar: AppCalendar) {
+class DuePeriods(calendar: AppCalendar, weekStart: WeekStart = WeekStart.MONDAY) {
     private val jalali = calendar == AppCalendar.JALALI
+
+    /** ISO weekday (Mon=1..Sun=7) the user's week starts on. */
+    private val weekStartIso = weekStart.isoWeekday
+
+    /** ISO weekday of the first weekend day: the 6th day of the user's week. */
+    private val weekendStartIso = (weekStartIso + 4) % 7 + 1
 
     private fun parts(epochDays: Int): CalendarDate =
         if (jalali) {
@@ -70,14 +81,14 @@ class DuePeriods(calendar: AppCalendar) {
      * they lapse. Ranges ending beyond next month bucket into the end date's year.
      */
     fun classify(startDays: Int, endDays: Int, todayDays: Int): TimelineBucket {
-        val weekStart = todayDays - (isoWeekday(todayDays) - 1)
+        val weekStart = todayDays - ((isoWeekday(todayDays) - weekStartIso + 7) % 7)
         val (monthStart, thisMonthEnd) = monthRange(todayDays, 0)
         val (nextMonthStart, nextMonthEnd) = monthRange(todayDays, 1)
 
         if (endDays < todayDays) return TimelineBucket.Section(TimelineSection.OVERDUE)
 
-        val isWeekBlock = isoWeekday(startDays) == 1 && endDays == startDays + 6
-        val isWeekendBlock = isoWeekday(startDays) == 6 && endDays == startDays + 1
+        val isWeekBlock = isoWeekday(startDays) == weekStartIso && endDays == startDays + 6
+        val isWeekendBlock = isoWeekday(startDays) == weekendStartIso && endDays == startDays + 1
         if (isWeekBlock || isWeekendBlock) {
             val blockWeekStart = if (isWeekBlock) startDays else startDays - 5
             if (blockWeekStart == weekStart) {
