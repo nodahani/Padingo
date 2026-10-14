@@ -1504,6 +1504,7 @@ private fun RepeatReminderTimePicker(
     onTimeSelected: (hour: Int, minute: Int) -> Unit,
 ) {
     val colors = AppTheme.colors
+    val dateTexts = AppTheme.dateTexts
 
     // Convert 24-hour to 12-hour format
     val isAm = selectedHour < 12
@@ -1555,13 +1556,12 @@ private fun RepeatReminderTimePicker(
 
             // AM/PM picker
             CompactWheelPickerGeneric(
-                items = listOf("AM", "PM"),
-                selectedItem = if (isAm) "AM" else "PM",
-                onItemSelected = { amPm ->
-                    val newIsAm = amPm == "AM"
+                items = listOf(true, false),
+                selectedItem = isAm,
+                onItemSelected = { newIsAm ->
                     onTimeSelected(toHour24(hour12, newIsAm), selectedMinute)
                 },
-                format = { it },
+                format = { dateTexts.amPm(it) },
                 itemWidth = 52.dp
             )
         }
