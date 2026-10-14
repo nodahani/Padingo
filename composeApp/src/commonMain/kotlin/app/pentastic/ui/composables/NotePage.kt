@@ -72,6 +72,7 @@ import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -85,6 +86,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -1529,43 +1531,66 @@ private fun RepeatReminderTimePicker(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Hour picker (1-12)
-            CompactWheelPicker(
-                items = (1..12).toList(),
-                selectedItem = hour12,
-                onItemSelected = { newHour12 ->
-                    onTimeSelected(toHour24(newHour12, isAm), selectedMinute)
-                },
-                format = { dateTexts.num2(it) }
-            )
+            // Digits read left-to-right even in Farsi, so the time keeps its hour : minute
+            // order in both languages; only the AM/PM marker moves, matching how the
+            // formatted labels render («ب.ظ ۳:۰۵»). Under an RTL layout direction the
+            // Row mirrors child order, so there the children are declared minute-first.
+            val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
-            Text(
-                text = ":",
-                color = colors.icon,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-            )
+            val hourWheel: @Composable () -> Unit = {
+                // Hour picker (1-12)
+                CompactWheelPicker(
+                    items = (1..12).toList(),
+                    selectedItem = hour12,
+                    onItemSelected = { newHour12 ->
+                        onTimeSelected(toHour24(newHour12, isAm), selectedMinute)
+                    },
+                    format = { dateTexts.num2(it) }
+                )
+            }
+            val colon: @Composable () -> Unit = {
+                Text(
+                    text = ":",
+                    color = colors.icon,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+            val minuteWheel: @Composable () -> Unit = {
+                // Minute picker
+                CompactWheelPicker(
+                    items = (0..59).toList(),
+                    selectedItem = selectedMinute,
+                    onItemSelected = { onTimeSelected(selectedHour, it) },
+                    format = { dateTexts.num2(it) }
+                )
+            }
+            val amPmWheel: @Composable () -> Unit = {
+                Spacer(Modifier.width(8.dp))
 
-            // Minute picker
-            CompactWheelPicker(
-                items = (0..59).toList(),
-                selectedItem = selectedMinute,
-                onItemSelected = { onTimeSelected(selectedHour, it) },
-                format = { dateTexts.num2(it) }
-            )
+                // AM/PM picker
+                CompactWheelPickerGeneric(
+                    items = listOf(true, false),
+                    selectedItem = isAm,
+                    onItemSelected = { newIsAm ->
+                        onTimeSelected(toHour24(hour12, newIsAm), selectedMinute)
+                    },
+                    format = { dateTexts.amPm(it) },
+                    itemWidth = 52.dp
+                )
+            }
 
-            Spacer(Modifier.width(8.dp))
-
-            // AM/PM picker
-            CompactWheelPickerGeneric(
-                items = listOf(true, false),
-                selectedItem = isAm,
-                onItemSelected = { newIsAm ->
-                    onTimeSelected(toHour24(hour12, newIsAm), selectedMinute)
-                },
-                format = { dateTexts.amPm(it) },
-                itemWidth = 52.dp
-            )
+            if (rtl) {
+                minuteWheel()
+                colon()
+                hourWheel()
+                amPmWheel()
+            } else {
+                hourWheel()
+                colon()
+                minuteWheel()
+                amPmWheel()
+            }
         }
     }
 }
