@@ -68,7 +68,8 @@ internal fun DueDateOptionsDialog(
     val strings = AppTheme.strings
     val dateTexts = AppTheme.dateTexts
     val calendar = dateTexts.calendar
-    val periods = remember(calendar) { DuePeriods(calendar) }
+    val weekStart = AppTheme.weekStart
+    val periods = remember(calendar, weekStart) { DuePeriods(calendar, weekStart) }
     val timeZone = TimeZone.currentSystemDefault()
     val today = remember { Clock.System.now().toLocalDateTime(timeZone).date }
     val hasDueDate = currentDueStartAt != 0L
@@ -81,7 +82,7 @@ internal fun DueDateOptionsDialog(
             hasDueDate -> {
                 val start = dueValueToLocalDate(currentDueStartAt, timeZone)
                 val end = dueValueToLocalDate(currentDueEndAt, timeZone)
-                DueDateOption.entries.firstOrNull { it.resolveRange(today, calendar) == start to end }
+                DueDateOption.entries.firstOrNull { it.resolveRange(today, calendar, weekStart) == start to end }
                     ?: DueDateOption.CUSTOM
             }
 
@@ -107,7 +108,7 @@ internal fun DueDateOptionsDialog(
             // Options with nothing left to refine apply immediately, no Save click needed
             option == DueDateOption.TODAY || option == DueDateOption.TOMORROW -> {
                 selectedOption = option
-                val (start, end) = option.resolveRange(today, calendar)!!
+                val (start, end) = option.resolveRange(today, calendar, weekStart)!!
                 onApply(start.toDueValue(), end.toDueValue())
             }
 
@@ -219,7 +220,7 @@ internal fun DueDateOptionsDialog(
                         val option = selectedOption!!
                         val (blockStart, blockEnd) =
                             if (option.drillsToMonths) periods.monthDates(option.presetYear(today, periods), chosenMonth!!)
-                            else option.resolveRange(today, calendar)!!
+                            else option.resolveRange(today, calendar, weekStart)!!
                         val title =
                             if (option.drillsToMonths) "${strings.dueOption(option)} · ${dateTexts.monthAbbrev(chosenMonth!!)}"
                             else strings.dueOption(option)
@@ -330,7 +331,7 @@ internal fun DueDateOptionsDialog(
                                                 option.drillsToMonths && month != null ->
                                                     periods.monthDates(option.presetYear(today, periods), month)
 
-                                                else -> option.resolveRange(today, calendar)!!
+                                                else -> option.resolveRange(today, calendar, weekStart)!!
                                             }
                                             onApply(start.toDueValue(), end.toDueValue())
                                         }

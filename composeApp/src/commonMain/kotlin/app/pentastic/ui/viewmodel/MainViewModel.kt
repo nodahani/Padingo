@@ -11,6 +11,7 @@ import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.ThemeMode
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.AppCalendar
+import app.pentastic.data.WeekStart
 import app.pentastic.notification.ReminderScheduler
 import app.pentastic.notification.nextFutureReminderTime
 import app.pentastic.utils.hasBeenHours
@@ -48,6 +49,11 @@ class MainViewModel(
 
     private val _calendar = MutableStateFlow(AppCalendar.GREGORIAN)
     val calendar: StateFlow<AppCalendar> = _calendar.asStateFlow()
+
+    /** The saved preference, or null while the user hasn't picked one yet. */
+    private val _weekStartPref = MutableStateFlow<Int?>(null)
+    private val _weekStart = MutableStateFlow(WeekStart.MONDAY)
+    val weekStart: StateFlow<WeekStart> = _weekStart.asStateFlow()
 
     private val _notesByPage = MutableStateFlow<Map<Long, List<Note>>>(emptyMap())
     val notesByPage: StateFlow<Map<Long, List<Note>>> = _notesByPage.asStateFlow()
@@ -111,6 +117,7 @@ class MainViewModel(
         loadThemeMode()
         loadLanguage()
         loadCalendar()
+        loadWeekStart()
         loadShowCompletedTasks()
         loadShowTimeline()
         loadShowSubPages()
@@ -534,10 +541,11 @@ class MainViewModel(
         }
     }
 
-        private fun loadLanguage() {
+    private fun loadLanguage() {
         viewModelScope.launch {
             dataStoreRepository.language.collect { ordinal ->
                 _language.value = AppLanguage.fromOrdinal(ordinal)
+                resolveWeekStart()
             }
         }
     }
@@ -562,6 +570,29 @@ class MainViewModel(
             _calendar.value = calendar
             dataStoreRepository.saveCalendar(calendar.ordinal)
         }
+    }
+
+    private fun loadWeekStart() {
+        viewModelScope.launch {
+            dataStoreRepository.weekStart.collect { pref ->
+                _weekStartPref.value = pref
+                resolveWeekStart()
+            }
+        }
+    }
+
+    fun setWeekStart(weekStart: WeekStart) {
+        viewModelScope.launch {
+            _weekStartPref.value = weekStart.ordinal
+            resolveWeekStart()
+            dataStoreRepository.saveWeekStart(weekStart.ordinal)
+        }
+    }
+
+    /** Unset preference falls back by language: Saturday for Farsi, Monday otherwise. */
+    private fun resolveWeekStart() {
+        _weekStart.value = _weekStartPref.value?.let { WeekStart.fromOrdinal(it) }
+            ?: if (_language.value == AppLanguage.FARSI) WeekStart.SATURDAY else WeekStart.MONDAY
     }
 
     private fun loadShowCompletedTasks() {

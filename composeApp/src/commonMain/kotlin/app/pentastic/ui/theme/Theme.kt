@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.ThemeMode
+import app.pentastic.data.WeekStart
 import app.pentastic.ui.strings.AppStrings
 import app.pentastic.ui.strings.LocalStrings
 import app.pentastic.ui.strings.stringsFor
@@ -70,6 +71,7 @@ val DarkColors = AppColors(
 
 val LocalAppColors = staticCompositionLocalOf { LightColors }
 val LocalAppCalendar = staticCompositionLocalOf { AppCalendar.GREGORIAN }
+val LocalWeekStart = staticCompositionLocalOf { WeekStart.MONDAY }
 val LocalDateTexts = staticCompositionLocalOf { DateTexts(AppLanguage.ENGLISH, AppCalendar.GREGORIAN) }
 
 object AppTheme {
@@ -84,6 +86,10 @@ object AppTheme {
     val calendar: AppCalendar
         @Composable
         get() = LocalAppCalendar.current
+
+    val weekStart: WeekStart
+        @Composable
+        get() = LocalWeekStart.current
 
     val dateTexts: DateTexts
         @Composable
@@ -131,6 +137,7 @@ fun AppTheme(
     themeMode: ThemeMode = ThemeMode.DAY_NIGHT,
     language: AppLanguage = AppLanguage.ENGLISH,
     calendar: AppCalendar = AppCalendar.GREGORIAN,
+    weekStart: WeekStart = WeekStart.MONDAY,
     content: @Composable () -> Unit,
 ) {
     val darkTheme = when (themeMode) {
@@ -153,6 +160,7 @@ fun AppTheme(
         LocalLayoutDirection provides layoutDirection,
         LocalStrings provides stringsFor(language),
         LocalAppCalendar provides calendar,
+        LocalWeekStart provides weekStart,
         LocalDateTexts provides dateTexts,
     ) {
         MaterialTheme(
