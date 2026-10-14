@@ -37,8 +37,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.data.AppCalendar
@@ -240,44 +242,66 @@ private fun CompactTimePicker(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Hour picker (1-12)
-        WheelPicker(
-            items = (1..12).toList(),
-            selectedItem = hour12,
-            onItemSelected = { newHour12 ->
-                onTimeSelected(toHour24(newHour12, isAm), selectedMinute)
-            },
-            format = { dateTexts.num2(it) }
-        )
+        // Digits read left-to-right even in Farsi, so the time keeps its hour : minute
+        // order in both languages; only the AM/PM marker moves, matching how the
+        // formatted labels render («ب.ظ ۳:۰۵»). Under an RTL layout direction the Row
+        // mirrors child order, so there the children are declared minute-first.
+        val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
+        val hourWheel: @Composable () -> Unit = {
+            // Hour picker (1-12)
+            WheelPicker(
+                items = (1..12).toList(),
+                selectedItem = hour12,
+                onItemSelected = { newHour12 ->
+                    onTimeSelected(toHour24(newHour12, isAm), selectedMinute)
+                },
+                format = { dateTexts.num2(it) }
+            )
+        }
+        val colon: @Composable () -> Unit = {
+            Text(
+                text = ":",
+                color = colors.icon,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+        val minuteWheel: @Composable () -> Unit = {
+            // Minute picker
+            WheelPicker(
+                items = (0..59).toList(),
+                selectedItem = selectedMinute,
+                onItemSelected = { onTimeSelected(selectedHour, it) },
+                format = { dateTexts.num2(it) }
+            )
+        }
+        val amPmWheel: @Composable () -> Unit = {
+            Spacer(Modifier.width(8.dp))
 
-        Text(
-            text = ":",
-            color = colors.icon,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
-        )
+            // AM/PM picker
+            WheelPickerGeneric(
+                items = listOf(true, false),
+                selectedItem = isAm,
+                onItemSelected = { newIsAm ->
+                    onTimeSelected(toHour24(hour12, newIsAm), selectedMinute)
+                },
+                format = { dateTexts.amPm(it) },
+                itemWidth = 52.dp
+            )
+        }
 
-        // Minute picker
-        WheelPicker(
-            items = (0..59).toList(),
-            selectedItem = selectedMinute,
-            onItemSelected = { onTimeSelected(selectedHour, it) },
-            format = { dateTexts.num2(it) }
-        )
-
-        Spacer(Modifier.width(8.dp))
-
-        // AM/PM picker
-        WheelPickerGeneric(
-            items = listOf(true, false),
-            selectedItem = isAm,
-            onItemSelected = { newIsAm ->
-                onTimeSelected(toHour24(hour12, newIsAm), selectedMinute)
-            },
-            format = { dateTexts.amPm(it) },
-            itemWidth = 52.dp
-        )
+        if (rtl) {
+            minuteWheel()
+            colon()
+            hourWheel()
+            amPmWheel()
+        } else {
+            hourWheel()
+            colon()
+            minuteWheel()
+            amPmWheel()
+        }
     }
 }
 
@@ -445,35 +469,55 @@ private fun DateWheelPicker(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Year picker
-        WheelPickerGeneric(
-            items = years,
-            selectedItem = selectedYear,
-            onItemSelected = { selectedYear = it },
-            format = { dateTexts.num(it) },
-            itemWidth = 64.dp
-        )
+        // Digits and month names read left-to-right even in Farsi, so the wheels keep
+        // their year | month | day left-to-right order in both languages. Under an RTL
+        // layout direction the Row mirrors child order, so there the wheels are
+        // declared day-first to cancel the mirroring and match the date labels.
+        val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
-        Spacer(Modifier.width(8.dp))
+        val yearWheel: @Composable () -> Unit = {
+            // Year picker
+            WheelPickerGeneric(
+                items = years,
+                selectedItem = selectedYear,
+                onItemSelected = { selectedYear = it },
+                format = { dateTexts.num(it) },
+                itemWidth = 64.dp
+            )
+        }
+        val monthWheel: @Composable () -> Unit = {
+            // Month picker
+            WheelPickerGeneric(
+                items = months,
+                selectedItem = selectedMonth,
+                onItemSelected = { selectedMonth = it },
+                format = { dateTexts.monthAbbrev(it) },
+                itemWidth = 92.dp
+            )
+        }
+        val dayWheel: @Composable () -> Unit = {
+            // Day picker
+            WheelPickerGeneric(
+                items = days,
+                selectedItem = selectedDay,
+                onItemSelected = { selectedDay = it },
+                format = { dateTexts.num(it) }
+            )
+        }
 
-        // Month picker
-        WheelPickerGeneric(
-            items = months,
-            selectedItem = selectedMonth,
-            onItemSelected = { selectedMonth = it },
-            format = { dateTexts.monthAbbrev(it) },
-            itemWidth = 92.dp
-        )
-
-        Spacer(Modifier.width(8.dp))
-
-        // Day picker
-        WheelPickerGeneric(
-            items = days,
-            selectedItem = selectedDay,
-            onItemSelected = { selectedDay = it },
-            format = { dateTexts.num(it) }
-        )
+        if (rtl) {
+            dayWheel()
+            Spacer(Modifier.width(8.dp))
+            monthWheel()
+            Spacer(Modifier.width(8.dp))
+            yearWheel()
+        } else {
+            yearWheel()
+            Spacer(Modifier.width(8.dp))
+            monthWheel()
+            Spacer(Modifier.width(8.dp))
+            dayWheel()
+        }
     }
 }
 
