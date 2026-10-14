@@ -246,7 +246,8 @@ private fun CompactTimePicker(
             selectedItem = hour12,
             onItemSelected = { newHour12 ->
                 onTimeSelected(toHour24(newHour12, isAm), selectedMinute)
-            }
+            },
+            format = { dateTexts.num2(it) }
         )
 
 
@@ -261,7 +262,8 @@ private fun CompactTimePicker(
         WheelPicker(
             items = (0..59).toList(),
             selectedItem = selectedMinute,
-            onItemSelected = { onTimeSelected(selectedHour, it) }
+            onItemSelected = { onTimeSelected(selectedHour, it) },
+            format = { dateTexts.num2(it) }
         )
 
         Spacer(Modifier.width(8.dp))
@@ -284,6 +286,7 @@ private fun WheelPicker(
     items: List<Int>,
     selectedItem: Int,
     onItemSelected: (Int) -> Unit,
+    format: (Int) -> String = { it.toString() },
 ) {
     val colors = AppTheme.colors
     val listState = rememberLazyListState()
@@ -375,7 +378,7 @@ private fun WheelPicker(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = padZero(item),
+                        text = format(item),
                         color = if (isSelected) colors.primaryText else colors.primaryText.copy(alpha = 0.4f),
                         fontSize = if (isSelected) 20.sp else 16.sp,
                         fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
@@ -596,9 +599,4 @@ private fun getDaysInMonth(year: Int, month: Month): Int {
 
 private fun isLeapYear(year: Int): Boolean {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
-}
-
-
-private fun padZero(value: Int): String {
-    return if (value < 10) "0$value" else value.toString()
 }

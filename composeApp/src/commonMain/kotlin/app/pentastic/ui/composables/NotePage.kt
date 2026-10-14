@@ -1535,7 +1535,8 @@ private fun RepeatReminderTimePicker(
                 selectedItem = hour12,
                 onItemSelected = { newHour12 ->
                     onTimeSelected(toHour24(newHour12, isAm), selectedMinute)
-                }
+                },
+                format = { dateTexts.num2(it) }
             )
 
             Text(
@@ -1549,7 +1550,8 @@ private fun RepeatReminderTimePicker(
             CompactWheelPicker(
                 items = (0..59).toList(),
                 selectedItem = selectedMinute,
-                onItemSelected = { onTimeSelected(selectedHour, it) }
+                onItemSelected = { onTimeSelected(selectedHour, it) },
+                format = { dateTexts.num2(it) }
             )
 
             Spacer(Modifier.width(8.dp))
@@ -1573,6 +1575,7 @@ private fun CompactWheelPicker(
     items: List<Int>,
     selectedItem: Int,
     onItemSelected: (Int) -> Unit,
+    format: (Int) -> String = { it.toString() },
 ) {
     val colors = AppTheme.colors
     val listState = rememberLazyListState()
@@ -1658,7 +1661,7 @@ private fun CompactWheelPicker(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (item < 10) "0$item" else item.toString(),
+                        text = format(item),
                         color = if (isSelected) colors.primaryText else colors.primaryText.copy(alpha = 0.4f),
                         fontSize = if (isSelected) 18.sp else 14.sp,
                         fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
