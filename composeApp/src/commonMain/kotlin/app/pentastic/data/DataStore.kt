@@ -110,7 +110,7 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-        val language: Flow<Int> = dataStore.data.map { preferences ->
+    val language: Flow<Int> = dataStore.data.map { preferences ->
         preferences[DatastoreKeys.LANGUAGE] ?: AppLanguage.ENGLISH.ordinal
     }
 
@@ -118,8 +118,8 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { settings ->
             settings[DatastoreKeys.LANGUAGE] = language
         }
-    }    
-    
+    }
+
     val calendar: Flow<Int> = dataStore.data.map { preferences ->
         preferences[DatastoreKeys.CALENDAR] ?: AppCalendar.GREGORIAN.ordinal
     }
@@ -129,6 +129,4 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
             settings[DatastoreKeys.CALENDAR] = calendar
         }
     }
-
-
 }
