@@ -187,9 +187,9 @@ fun SettingsScreen(
         )
     }
 
-        if (showLanguageDialog) {
+    if (showLanguageDialog) {
         LanguageSelectionDialog(
-            currentLanguage = viewModel.language.value,
+            currentLanguage = language,
             onDismiss = { showLanguageDialog = false },
             onConfirm = { selectedLanguage ->
                 viewModel.setLanguage(selectedLanguage)
@@ -200,7 +200,7 @@ fun SettingsScreen(
 
     if (showCalendarDialog) {
         CalendarSelectionDialog(
-            currentCalendar = viewModel.calendar.value,
+            currentCalendar = calendar,
             onDismiss = { showCalendarDialog = false },
             onConfirm = { selectedCalendar ->
                 viewModel.setCalendar(selectedCalendar)
