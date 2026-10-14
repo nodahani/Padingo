@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.RepeatFrequency
 import app.pentastic.ui.theme.AppTheme
-import app.pentastic.utils.DateTexts
+import app.pentastic.utils.JalaliCalendar
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -393,24 +393,27 @@ private fun DateWheelPicker(
 ) {
     val colors = AppTheme.colors
     val dateTexts = AppTheme.dateTexts
-    // The wheel is still Gregorian until the picker follows the calendar setting,
-    // so month names stay Gregorian, written in the active language
-    val monthNames = remember(dateTexts.language) { DateTexts(dateTexts.language, AppCalendar.GREGORIAN) }
+    val isJalali = AppTheme.calendar == AppCalendar.JALALI
     val today = remember {
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     }
 
-    // Generate year range (current year to +10 years)
-    val years = remember { (today.year..(today.year + 10)).toList() }
-    val months = remember { Month.entries.toList() }
+    // Today and the selected date, broken down in the active calendar
+    val todayParts = dateTexts.parts(today.toEpochDays().toInt())
+    val selectedParts = dateTexts.parts(selectedDate.toEpochDays().toInt())
 
-    var selectedYear by remember { mutableStateOf(selectedDate.year) }
-    var selectedMonth by remember { mutableStateOf(selectedDate.month) }
-    var selectedDay by remember { mutableStateOf(selectedDate.dayOfMonth) }
+    // Generate year range (current year to +10 years) in the active calendar
+    val years = remember(todayParts.year) { (todayParts.year..(todayParts.year + 10)).toList() }
+    val months = remember { (1..12).toList() }
 
-    // Calculate days in the selected month
-    val daysInMonth = remember(selectedYear, selectedMonth) {
-        getDaysInMonth(selectedYear, selectedMonth)
+    var selectedYear by remember { mutableStateOf(selectedParts.year) }
+    var selectedMonth by remember { mutableStateOf(selectedParts.month) }
+    var selectedDay by remember { mutableStateOf(selectedParts.day) }
+
+    // Calculate days in the selected month, in the active calendar
+    val daysInMonth = remember(selectedYear, selectedMonth, isJalali) {
+        if (isJalali) JalaliCalendar.monthLength(selectedYear, selectedMonth)
+        else getDaysInMonth(selectedYear, Month.entries[selectedMonth - 1])
     }
     val days = remember(daysInMonth) { (1..daysInMonth).toList() }
 
@@ -423,7 +426,12 @@ private fun DateWheelPicker(
 
     // Update the selected date when any component changes
     LaunchedEffect(selectedYear, selectedMonth, selectedDay) {
-        val newDate = LocalDate(selectedYear, selectedMonth, selectedDay.coerceAtMost(daysInMonth))
+        val day = selectedDay.coerceAtMost(daysInMonth)
+        val newDate = if (isJalali) {
+            LocalDate.fromEpochDays(JalaliCalendar.toEpochDays(selectedYear, selectedMonth, day))
+        } else {
+            LocalDate(selectedYear, selectedMonth, day)
+        }
         if (newDate != selectedDate && newDate >= today) {
             onDateSelected(newDate)
         }
@@ -439,7 +447,7 @@ private fun DateWheelPicker(
             items = years,
             selectedItem = selectedYear,
             onItemSelected = { selectedYear = it },
-            format = { it.toString() },
+            format = { dateTexts.num(it) },
             itemWidth = 64.dp
         )
 
@@ -450,8 +458,8 @@ private fun DateWheelPicker(
             items = months,
             selectedItem = selectedMonth,
             onItemSelected = { selectedMonth = it },
-            format = { monthNames.monthAbbrev(it.ordinal + 1) },
-            itemWidth = 72.dp
+            format = { dateTexts.monthAbbrev(it) },
+            itemWidth = 92.dp
         )
 
         Spacer(Modifier.width(8.dp))
@@ -461,7 +469,7 @@ private fun DateWheelPicker(
             items = days,
             selectedItem = selectedDay,
             onItemSelected = { selectedDay = it },
-            format = { it.toString() }
+            format = { dateTexts.num(it) }
         )
     }
 }
