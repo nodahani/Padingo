@@ -182,7 +182,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                     add(
                         TimelineSectionUi(
                             key = "YEAR_$year",
-                            label = year.toString(),
+                            label = dateTexts.num(year),
                             notes = prioritySort(grouped[TimelineBucket.Year(year)] ?: emptyList()),
                             collapsedByDefault = true,
                         )

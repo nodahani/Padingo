@@ -43,12 +43,16 @@ class DateTexts(val language: AppLanguage, val calendar: AppCalendar) {
         return if (isFarsi) full else full.take(3)
     }
 
-    /** Hook for digit style. Latin digits for now. */
-    fun num(value: Int): String = value.toString()
+    /** Numbers in the active digit style: Farsi digits (۰–۹) in Farsi, Latin otherwise. */
+    fun num(value: Int): String =
+        if (isFarsi) value.withFarsiDigits() else value.toString()
+
+    /** Zero-padded two-digit number in the active digit style ("05" / "۰۵"). */
+    fun num2(value: Int): String = num(value / 10) + num(value % 10)
 
     /** Two-digit year for Gregorian ("26"); Jalali years stay whole ("1405"). */
     fun yearShort(year: Int): String =
-        if (isJalali) num(year) else (year % 100).toString().padStart(2, '0')
+        if (isJalali) num(year) else twoDigits(year % 100)
 
     /** "3–9" in English, "3 تا 9" in Persian. */
     fun joinCompact(from: String, to: String): String =
@@ -206,4 +210,12 @@ internal fun gregorianFromEpochDays(epochDays: Int): CalendarDate {
     val month = if (mp < 10) mp + 3 else mp - 9
     val year = yoe + era * 400 + if (month <= 2) 1 else 0
     return CalendarDate(year, month, day)
+}
+
+/** Renders [this] with Farsi digits (۰–۹) instead of Latin ones. */
+fun Int.withFarsiDigits(): String {
+    val latin = toString()
+    return buildString(latin.length) {
+        for (c in latin) append(if (c in '0'..'9') '۰' + (c - '0') else c)
+    }
 }

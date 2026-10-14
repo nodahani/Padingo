@@ -7,6 +7,7 @@ import app.pentastic.data.RepeatFrequency
 import app.pentastic.data.TimelineSection
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.ThemeMode
+import app.pentastic.utils.withFarsiDigits
 
 interface AppStrings {
     // Common
@@ -410,14 +411,14 @@ object FarsiStrings : AppStrings {
         ThemeMode.DAY_NIGHT -> "روز/شب"
     }
 
-    override fun archiveCount(count: Int) = "بایگانی ($count)"
+    override fun archiveCount(count: Int) = "بایگانی (${count.withFarsiDigits()})"
 
     override fun deletePageMessage(pageName: String) =
         "صفحه‌ی «$pageName» و همه‌ی یادداشت‌های آن برای همیشه حذف شود؟ این عمل قابل بازگشت نیست."
 
-    override fun completedTasks(count: Int) = "کارهای انجام‌شده ($count)"
+    override fun completedTasks(count: Int) = "کارهای انجام‌شده (${count.withFarsiDigits()})"
 
-    override fun moveCompletedMessage(count: Int) = "همه‌ی $count کار انجام‌شده به سطل زباله منتقل شوند؟"
+    override fun moveCompletedMessage(count: Int) = "همه‌ی ${count.withFarsiDigits()} کار انجام‌شده به سطل زباله منتقل شوند؟"
 
     override fun calendarLabel(calendar: AppCalendar) = when (calendar) {
         AppCalendar.GREGORIAN -> "میلادی"
