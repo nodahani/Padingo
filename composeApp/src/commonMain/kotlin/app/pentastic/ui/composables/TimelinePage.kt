@@ -635,6 +635,7 @@ private data class TimelineSectionUi(
 private fun TimelineEmptyState(today: LocalDate) {
     val colors = AppTheme.colors
     val dateTexts = AppTheme.dateTexts
+    val weekStart = AppTheme.weekStart
     val strings = AppTheme.strings
     Row(
         modifier = Modifier
@@ -681,7 +682,7 @@ private fun TimelineEmptyState(today: LocalDate) {
                 color = colors.pageTitle,
                 modifier = Modifier.alignByBaseline(),
             )
-            sectionSubtitle(section, today, dateTexts)?.let { subtitle ->
+            sectionSubtitle(section, today, dateTexts, weekStart)?.let { subtitle ->
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = "· $subtitle",
