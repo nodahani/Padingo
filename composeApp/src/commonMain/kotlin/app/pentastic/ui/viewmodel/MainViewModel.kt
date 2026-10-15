@@ -552,9 +552,25 @@ class MainViewModel(
 
     fun setLanguage(language: AppLanguage) {
         viewModelScope.launch {
+            val previous = AppLanguage.fromOrdinal(dataStoreRepository.languageOnce())
             _language.value = language
             dataStoreRepository.saveLanguage(language.ordinal)
+            if (previous != language) syncSeedPageNames(previous, language)
         }
+    }
+
+    /**
+     * Renames untouched sample pages to their name in the new language, so the
+     * demo content follows the app language. A page the user has renamed no
+     * longer matches a sample name and is left alone.
+     */
+    private suspend fun syncSeedPageNames(from: AppLanguage, to: AppLanguage) {
+        val pages = repository.getAllPages().first()
+        val updates = pages.mapNotNull { page ->
+            OnboardingSeedTexts.translatedName(page.name, from, to)
+                ?.let { page.copy(name = it) }
+        }
+        if (updates.isNotEmpty()) repository.updatePages(updates)
     }
 
     private fun loadCalendar() {
