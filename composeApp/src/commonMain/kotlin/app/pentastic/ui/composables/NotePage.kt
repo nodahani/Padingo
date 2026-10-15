@@ -683,7 +683,7 @@ fun NotePage(
                                     Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.Top) {
                                         Text(
                                             modifier = Modifier.padding(start = 12.dp, top = 6.dp).defaultMinSize(minWidth = 28.dp),
-                                            fontFamily = titleFontFamily(FontWeight.Regular),
+                                            fontFamily = titleFontFamily(FontWeight.Normal),
                                             text = (list.size + index + 1).toString() + ".",
                                             color = colors.primaryText.copy(alpha = 0.33f),
                                             textAlign = TextAlign.Center,
