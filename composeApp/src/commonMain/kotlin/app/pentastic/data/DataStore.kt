@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
@@ -114,6 +115,9 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
     val language: Flow<Int> = dataStore.data.map { preferences ->
         preferences[DatastoreKeys.LANGUAGE] ?: AppLanguage.FARSI.ordinal
     }
+
+    suspend fun languageOnce(): Int =
+        dataStore.data.first()[DatastoreKeys.LANGUAGE] ?: AppLanguage.FARSI.ordinal
 
     suspend fun saveLanguage(language: Int) {
         dataStore.edit { settings ->
