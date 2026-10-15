@@ -58,6 +58,7 @@ interface AppStrings {
     val addTask: String
     val addNote: String
     val addPage: String
+    val addWithPriority: String
     val archiveEmpty: String
     val empty: String
     val trashEmpty: String
@@ -122,6 +123,7 @@ interface AppStrings {
     fun themeLabel(mode: ThemeMode): String
     fun archiveCount(count: Int): String
     fun deletePageMessage(pageName: String): String
+    fun movePageToTrashMessage(pageName: String): String
     fun completedTasks(count: Int): String
     fun moveCompletedMessage(count: Int): String
     fun calendarLabel(calendar: AppCalendar): String
@@ -181,6 +183,7 @@ object EnglishStrings : AppStrings {
     override val addTask = "Add a task..."
     override val addNote = "Add a note..."
     override val addPage = "Add a new page..."
+    override val addWithPriority = "Add with priority"
     override val archiveEmpty = "Archive is empty"
     override val empty = "Empty"
     override val trashEmpty = "Trash is empty"
@@ -255,6 +258,9 @@ object EnglishStrings : AppStrings {
 
     override fun deletePageMessage(pageName: String) =
         "Permanently delete page '$pageName' and all its notes? This cannot be undone."
+
+    override fun movePageToTrashMessage(pageName: String) =
+        "Move page '$pageName' and all its notes to trash?"
 
     override fun completedTasks(count: Int) = "Completed tasks ($count)"
 
@@ -358,6 +364,7 @@ object FarsiStrings : AppStrings {
     override val addTask = "یک کار اضافه کن..."
     override val addNote = "یک یادداشت اضافه کن..."
     override val addPage = "یک صفحه‌ی جدید اضافه کن..."
+    override val addWithPriority = "افزودن با اولویت"
     override val archiveEmpty = "بایگانی خالی است"
     override val empty = "خالی کردن"
     override val trashEmpty = "سطل زباله خالی است"
@@ -432,6 +439,9 @@ object FarsiStrings : AppStrings {
 
     override fun deletePageMessage(pageName: String) =
         "صفحه‌ی «$pageName» و همه‌ی یادداشت‌های آن برای همیشه حذف شود؟ این عمل قابل بازگشت نیست."
+
+    override fun movePageToTrashMessage(pageName: String) =
+        "صفحه‌ی «$pageName» و همه‌ی یادداشت‌های آن به سطل زباله منتقل شود؟"
 
     override fun completedTasks(count: Int) = "کارهای انجام‌شده (${count.withFarsiDigits()})"
 

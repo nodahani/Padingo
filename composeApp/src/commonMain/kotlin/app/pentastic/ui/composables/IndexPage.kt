@@ -980,7 +980,7 @@ fun DeletePageConfirmationDialog(
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(strings.moveToTrash, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
                 Spacer(Modifier.height(16.dp))
-                Text("Move page '${page.name}' and all its notes to trash?", color = colors.primaryText)
+                Text(strings.movePageToTrashMessage(page.name), color = colors.primaryText)
                 Spacer(Modifier.height(24.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = onDismiss) {
