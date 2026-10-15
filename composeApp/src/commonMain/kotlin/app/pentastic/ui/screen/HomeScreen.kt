@@ -35,6 +35,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
@@ -468,7 +470,13 @@ fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .graphicsLayer {
-                                    translationX = (if (pageOffset < 0f) 0f else -pageOffset * size.width)
+                                    // The pager lays pages right-to-left under an RTL
+                                    // layout direction, so the parallax shift must flip
+                                    // sign too or the incoming page flies in from far
+                                    // off-screen instead of sitting still underneath
+                                    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+                                    val direction = if (rtl) 1f else -1f
+                                    translationX = if (pageOffset < 0f) 0f else direction * pageOffset * size.width
                                     val scale = lerp(1f, 0.9f, pageOffset.coerceIn(0f, 1f))
                                     scaleX = scale
                                     scaleY = scale
