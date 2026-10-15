@@ -12,6 +12,7 @@ import app.pentastic.data.ThemeMode
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.WeekStart
+import app.pentastic.ui.strings.stringsFor
 import app.pentastic.notification.ReminderScheduler
 import app.pentastic.notification.nextFutureReminderTime
 import app.pentastic.utils.hasBeenHours
@@ -261,7 +262,16 @@ class MainViewModel(
     fun addTimelineTask(text: String, dueStartAt: Long, dueEndAt: Long) {
         viewModelScope.launch {
             val timelinePageId = repository.getTimelinePageOnce()?.id
-                ?: repository.insertPage(Page(name = "Timeline", pageType = PageType.TIMELINE.ordinal))
+                ?: repository.insertPage(
+                    Page(
+                        // Name the page in the saved language; lookup is by page
+                        // type, so the name stays freely renameable by the user
+                        name = stringsFor(
+                            AppLanguage.fromOrdinal(dataStoreRepository.languageOnce())
+                        ).timeline,
+                        pageType = PageType.TIMELINE.ordinal
+                    )
+                )
             repository.insertNote(
                 Note(pageId = timelinePageId, text = text, dueStartAt = dueStartAt, dueEndAt = dueEndAt)
             )
