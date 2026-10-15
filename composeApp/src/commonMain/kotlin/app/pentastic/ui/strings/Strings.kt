@@ -350,7 +350,7 @@ object FarsiStrings : AppStrings {
     override val delete = "حذف"
     override val defaultPageName = "صفحه"
     override val defaultSubPageName = "زیرصفحه"
-    override val notesPage = "صفحه یادداشت"
+    override val notesPage = "صفحه‌ی یادداشت"
     override val tasksPage = "صفحه کارها"
     override val editPageName = "ویرایش نام صفحه"
     override val moveToTrash = "انتقال به سطل زباله"
@@ -402,13 +402,13 @@ object FarsiStrings : AppStrings {
 
     // Timeline, Reminder, Due date
     override val timelineRepeating = "تکرارشونده"
-    override val timelineUnscheduled = "بدون برنامه"
+    override val timelineUnscheduled = "بدون سررسید"
     override val timelineCompleted = "انجام‌شده"
     override val timelineEmpty =
         "هنوز چیزی برنامه‌ریزی نشده.\n\nپایین یک کار اضافه کن، یا منوی هر کار را باز کن و تاریخ سررسید بگذار؛ اینجا نمایش داده می‌شود."
     override val setReminder = "تنظیم یادآور"
     override val changeDateTime = "تغییر تاریخ و زمان"
-    override val tapToEditRepeat = "برای تغییر تنظیمات تکرار ضربه بزنید"
+    override val tapToEditRepeat = "برای تغییر تنظیمات تکرار ضربه بزن"
     override val enabled = "فعال"
     override val remove = "برداشتن"
     override val selectDate = "انتخاب تاریخ"
@@ -472,7 +472,7 @@ object FarsiStrings : AppStrings {
     }
 
     override fun timelineSection(section: TimelineSection) = when (section) {
-        TimelineSection.OVERDUE -> "عقب‌افتاده"
+        TimelineSection.OVERDUE -> "از موعد گذشته"
         TimelineSection.TODAY -> "امروز"
         TimelineSection.TOMORROW -> "فردا"
         TimelineSection.THIS_WEEK -> "این هفته"
