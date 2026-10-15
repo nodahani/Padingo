@@ -78,7 +78,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -101,6 +100,7 @@ import app.pentastic.data.formatDueDateLabel
 import app.pentastic.data.hasDueDate
 import app.pentastic.data.isDueOverdue
 import app.pentastic.ui.theme.AppTheme
+import app.pentastic.ui.theme.titleFontFamily
 import app.pentastic.ui.theme.appRadioButtonColors
 import app.pentastic.ui.theme.appSwitchColors
 import app.pentastic.utils.JalaliCalendar
@@ -116,10 +116,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.Font
-import pentastic.composeapp.generated.resources.Merriweather_Light
-import pentastic.composeapp.generated.resources.Merriweather_Regular
-import pentastic.composeapp.generated.resources.Res
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.time.Clock
@@ -233,7 +229,7 @@ fun NotePage(
                 style = TextStyle(
                     color = AppTheme.colors.pageTitle,
                     fontSize = 36.sp,
-                    fontFamily = FontFamily(Font(Res.font.Merriweather_Light))
+                    fontFamily = titleFontFamily()
                 )
             )
         }
@@ -470,7 +466,7 @@ fun NotePage(
                                 Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.Top) {
                                     Text(
                                         modifier = Modifier.padding(start = 12.dp, top = 6.dp).defaultMinSize(minWidth = 28.dp),
-                                        fontFamily = FontFamily(Font(Res.font.Merriweather_Light)),
+                                        fontFamily = titleFontFamily(),
                                         text = (index + 1).toString() + ".",
                                         // color = if (note.priority == 1 && note.done.not()) colors.priorityText.copy(alpha = 0.7f) else colors.primaryText.copy(alpha = 0.33f),
                                         color = colors.primaryText.copy(alpha = 0.33f),
@@ -687,7 +683,7 @@ fun NotePage(
                                     Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.Top) {
                                         Text(
                                             modifier = Modifier.padding(start = 12.dp, top = 6.dp).defaultMinSize(minWidth = 28.dp),
-                                            fontFamily = FontFamily(Font(Res.font.Merriweather_Regular)),
+                                            fontFamily = titleFontFamily(FontWeight.Regular),
                                             text = (list.size + index + 1).toString() + ".",
                                             color = colors.primaryText.copy(alpha = 0.33f),
                                             textAlign = TextAlign.Center,
