@@ -466,6 +466,9 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f)
                     ) { pageIndex ->
                         val pageOffset = pagerState.getOffsetDistanceInPages(pageIndex)
+                        // Read outside the graphicsLayer lambda: it is a @Composable
+                        // call and graphicsLayer is a plain lambda, not composable
+                        val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -474,7 +477,6 @@ fun HomeScreen(
                                     // layout direction, so the parallax shift must flip
                                     // sign too or the incoming page flies in from far
                                     // off-screen instead of sitting still underneath
-                                    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
                                     val direction = if (rtl) 1f else -1f
                                     translationX = if (pageOffset < 0f) 0f else direction * pageOffset * size.width
                                     val scale = lerp(1f, 0.9f, pageOffset.coerceIn(0f, 1f))
