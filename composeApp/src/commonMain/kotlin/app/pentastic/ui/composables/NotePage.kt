@@ -92,6 +92,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import app.pentastic.data.AppCalendar
 import app.pentastic.data.Note
 import app.pentastic.data.Page
 import app.pentastic.data.PageType
@@ -102,6 +103,7 @@ import app.pentastic.data.isDueOverdue
 import app.pentastic.ui.theme.AppTheme
 import app.pentastic.ui.theme.appRadioButtonColors
 import app.pentastic.ui.theme.appSwitchColors
+import app.pentastic.utils.JalaliCalendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -1809,30 +1811,42 @@ internal fun StartDatePickerDialog(
 ) {
     val colors = AppTheme.colors
     val strings = AppTheme.strings
+    val dateTexts = AppTheme.dateTexts
+    val isJalali = AppTheme.calendar == AppCalendar.JALALI
     var selectedDate by remember { mutableStateOf(initialDate) }
     val timeZone = TimeZone.currentSystemDefault()
     val today = remember { Clock.System.now().toLocalDateTime(timeZone).date }
 
-    // Generate year range
-    val years = remember { ((today.year - 1)..(today.year + 10)).toList() }
-    val months = remember { kotlinx.datetime.Month.entries.toList() }
+    // Today and the selected date, broken down in the active calendar
+    val todayParts = dateTexts.parts(today.toEpochDays().toInt())
+    val selectedParts = dateTexts.parts(selectedDate.toEpochDays().toInt())
 
-    var selectedYear by remember { mutableStateOf(selectedDate.year) }
-    var selectedMonth by remember { mutableStateOf(selectedDate.month) }
-    var selectedDay by remember { mutableStateOf(selectedDate.dayOfMonth) }
+    // Generate year range (last year to +10 years) in the active calendar
+    val years = remember(todayParts.year) { ((todayParts.year - 1)..(todayParts.year + 10)).toList() }
+    val months = remember { (1..12).toList() }
 
-    val daysInMonth = remember(selectedYear, selectedMonth) {
-        when (selectedMonth) {
-            kotlinx.datetime.Month.JANUARY, kotlinx.datetime.Month.MARCH, kotlinx.datetime.Month.MAY,
-            kotlinx.datetime.Month.JULY, kotlinx.datetime.Month.AUGUST, kotlinx.datetime.Month.OCTOBER,
-            kotlinx.datetime.Month.DECEMBER,
-                -> 31
+    var selectedYear by remember { mutableStateOf(selectedParts.year) }
+    var selectedMonth by remember { mutableStateOf(selectedParts.month) }
+    var selectedDay by remember { mutableStateOf(selectedParts.day) }
 
-            kotlinx.datetime.Month.APRIL, kotlinx.datetime.Month.JUNE, kotlinx.datetime.Month.SEPTEMBER,
-            kotlinx.datetime.Month.NOVEMBER,
-                -> 30
+    // Calculate days in the selected month, in the active calendar
+    val daysInMonth = remember(selectedYear, selectedMonth, isJalali) {
+        if (isJalali) {
+            JalaliCalendar.monthLength(selectedYear, selectedMonth)
+        } else {
+            val gregorianMonth = kotlinx.datetime.Month.entries[selectedMonth - 1]
+            when (gregorianMonth) {
+                kotlinx.datetime.Month.JANUARY, kotlinx.datetime.Month.MARCH, kotlinx.datetime.Month.MAY,
+                kotlinx.datetime.Month.JULY, kotlinx.datetime.Month.AUGUST, kotlinx.datetime.Month.OCTOBER,
+                kotlinx.datetime.Month.DECEMBER,
+                    -> 31
 
-            kotlinx.datetime.Month.FEBRUARY -> if ((selectedYear % 4 == 0 && selectedYear % 100 != 0) || (selectedYear % 400 == 0)) 29 else 28
+                kotlinx.datetime.Month.APRIL, kotlinx.datetime.Month.JUNE, kotlinx.datetime.Month.SEPTEMBER,
+                kotlinx.datetime.Month.NOVEMBER,
+                    -> 30
+
+                kotlinx.datetime.Month.FEBRUARY -> if ((selectedYear % 4 == 0 && selectedYear % 100 != 0) || (selectedYear % 400 == 0)) 29 else 28
+            }
         }
     }
     val days = remember(daysInMonth) { (1..daysInMonth).toList() }
@@ -1844,7 +1858,12 @@ internal fun StartDatePickerDialog(
     }
 
     LaunchedEffect(selectedYear, selectedMonth, selectedDay) {
-        val newDate = LocalDate(selectedYear, selectedMonth, selectedDay.coerceAtMost(daysInMonth))
+        val day = selectedDay.coerceAtMost(daysInMonth)
+        val newDate = if (isJalali) {
+            LocalDate.fromEpochDays(JalaliCalendar.toEpochDays(selectedYear, selectedMonth, day))
+        } else {
+            LocalDate(selectedYear, selectedMonth, day)
+        }
         if (newDate != selectedDate) {
             selectedDate = newDate
         }
@@ -1871,37 +1890,55 @@ internal fun StartDatePickerDialog(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Year picker
-                    StartDateWheelPicker(
-                        items = years,
-                        selectedItem = selectedYear,
-                        onItemSelected = { selectedYear = it },
-                        format = { it.toString() },
-                        itemWidth = 64.dp
-                    )
+                    // Digits and month names read left-to-right even in Farsi, so the wheels keep
+                    // their year | month | day left-to-right order in both languages. Under an RTL
+                    // layout direction the Row mirrors child order, so there the wheels are
+                    // declared day-first to cancel the mirroring and match the date labels.
+                    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
-                    Spacer(Modifier.width(8.dp))
+                    val yearWheel: @Composable () -> Unit = {
+                        // Year picker
+                        StartDateWheelPicker(
+                            items = years,
+                            selectedItem = selectedYear,
+                            onItemSelected = { selectedYear = it },
+                            format = { dateTexts.num(it) },
+                            itemWidth = 64.dp
+                        )
+                    }
+                    val monthWheel: @Composable () -> Unit = {
+                        // Month picker
+                        StartDateWheelPicker(
+                            items = months,
+                            selectedItem = selectedMonth,
+                            onItemSelected = { selectedMonth = it },
+                            format = { dateTexts.monthAbbrev(it) },
+                            itemWidth = 92.dp
+                        )
+                    }
+                    val dayWheel: @Composable () -> Unit = {
+                        // Day picker
+                        StartDateWheelPicker(
+                            items = days,
+                            selectedItem = selectedDay,
+                            onItemSelected = { selectedDay = it },
+                            format = { dateTexts.num(it) }
+                        )
+                    }
 
-                    // Month picker
-                    StartDateWheelPicker(
-                        items = months,
-                        selectedItem = selectedMonth,
-                        onItemSelected = { selectedMonth = it },
-                        format = { month ->
-                            month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-                        },
-                        itemWidth = 72.dp
-                    )
-
-                    Spacer(Modifier.width(8.dp))
-
-                    // Day picker
-                    StartDateWheelPicker(
-                        items = days,
-                        selectedItem = selectedDay,
-                        onItemSelected = { selectedDay = it },
-                        format = { it.toString() }
-                    )
+                    if (rtl) {
+                        dayWheel()
+                        Spacer(Modifier.width(8.dp))
+                        monthWheel()
+                        Spacer(Modifier.width(8.dp))
+                        yearWheel()
+                    } else {
+                        yearWheel()
+                        Spacer(Modifier.width(8.dp))
+                        monthWheel()
+                        Spacer(Modifier.width(8.dp))
+                        dayWheel()
+                    }
                 }
 
                 Spacer(Modifier.height(20.dp))
