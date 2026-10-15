@@ -112,7 +112,7 @@ class DataStoreRepository(private val dataStore: DataStore<Preferences>) {
     }
 
     val language: Flow<Int> = dataStore.data.map { preferences ->
-        preferences[DatastoreKeys.LANGUAGE] ?: AppLanguage.ENGLISH.ordinal
+        preferences[DatastoreKeys.LANGUAGE] ?: AppLanguage.FARSI.ordinal
     }
 
     suspend fun saveLanguage(language: Int) {

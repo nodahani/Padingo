@@ -1,9 +1,9 @@
 package app.pentastic.ui.viewmodel
 
 /**
- * The sample pages and notes written to a fresh install, in the device's
- * language (see deviceAppLanguage). They are stored content, not UI labels,
- * so they are captured once at first launch and are not affected by later
+ * The sample pages and notes written to a fresh install, in the app's saved
+ * language (Farsi by default). They are stored content, not UI labels, so
+ * they are captured once at first launch and are not affected by later
  * language changes.
  */
 internal class OnboardingSeedTexts(isFarsi: Boolean) {

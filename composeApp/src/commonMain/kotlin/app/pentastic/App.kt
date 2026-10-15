@@ -21,7 +21,7 @@ fun App() {
     val themeOrdinal by dataStoreRepository.themeMode.collectAsState(initial = ThemeMode.DAY_NIGHT.ordinal)
     val themeMode = ThemeMode.fromOrdinal(themeOrdinal)
 
-    val languageOrdinal by dataStoreRepository.language.collectAsState(initial = AppLanguage.ENGLISH.ordinal)
+    val languageOrdinal by dataStoreRepository.language.collectAsState(initial = AppLanguage.FARSI.ordinal)
     val language = AppLanguage.fromOrdinal(languageOrdinal)
 
     val calendarOrdinal by dataStoreRepository.calendar.collectAsState(initial = AppCalendar.GREGORIAN.ordinal)
