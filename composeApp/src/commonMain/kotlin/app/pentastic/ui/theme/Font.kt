@@ -4,8 +4,11 @@ import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import app.pentastic.data.AppLanguage
 import org.jetbrains.compose.resources.Font
 import pentastic.composeapp.generated.resources.Res
+import pentastic.composeapp.generated.resources.Merriweather_Light
+import pentastic.composeapp.generated.resources.Merriweather_Regular
 import pentastic.composeapp.generated.resources.Inter_Thin
 import pentastic.composeapp.generated.resources.Inter_Light
 import pentastic.composeapp.generated.resources.Inter_Regular
@@ -42,6 +45,20 @@ private fun vazirmatnFontFamily() = FontFamily(
     Font(Res.font.Vazirmatn_Bold, weight = FontWeight.Bold),
     Font(Res.font.Vazirmatn_Black, weight = FontWeight.Black)
 )
+
+/**
+ * Font family for the big page titles. Merriweather only covers Latin, so in
+ * Farsi it silently falls back to the platform font; there Vazirmatn is used
+ * instead. The Latin path keeps Merriweather's Light/Regular faces as before.
+ */
+@Composable
+fun titleFontFamily(weight: FontWeight = FontWeight.Light): FontFamily {
+    if (AppTheme.dateTexts.language == AppLanguage.FARSI) return vazirmatnFontFamily()
+    return when (weight) {
+        FontWeight.Regular -> FontFamily(Font(Res.font.Merriweather_Regular, weight))
+        else -> FontFamily(Font(Res.font.Merriweather_Light, weight))
+    }
+}
 
 @Composable
 fun appTypography(isFarsi: Boolean) = Typography().run {

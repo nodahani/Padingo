@@ -36,7 +36,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,6 +59,7 @@ import app.pentastic.data.epochMillisToLocalDate
 import app.pentastic.data.hasDueDate
 import app.pentastic.data.timelineSectionDropRange
 import app.pentastic.ui.theme.AppTheme
+import app.pentastic.ui.theme.titleFontFamily
 import app.pentastic.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.datetime.DateTimeUnit
@@ -74,10 +74,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.Font
 import org.koin.compose.viewmodel.koinViewModel
-import pentastic.composeapp.generated.resources.Merriweather_Light
-import pentastic.composeapp.generated.resources.Res
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.ReorderableLazyListState
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -439,7 +436,7 @@ fun TimelinePage(modifier: Modifier = Modifier) {
                             fontSize = if (isFirst) 36.sp else 18.sp,
                             // Only the top section keeps the serif page-title look;
                             // the rest fall back to the theme's sans (Inter)
-                            fontFamily = if (isFirst) FontFamily(Font(Res.font.Merriweather_Light)) else null,
+                            fontFamily = if (isFirst) titleFontFamily() else null,
                             color = if (isCollapsed) colors.pageTitle.copy(alpha = 0.45f) else colors.pageTitle,
                             modifier = Modifier.alignByBaseline(),
                         )
@@ -648,7 +645,7 @@ private fun TimelineEmptyState(today: LocalDate) {
         Text(
             text = strings.timelineSection(TimelineSection.TODAY),
             fontSize = 36.sp,
-            fontFamily = FontFamily(Font(Res.font.Merriweather_Light)),
+            fontFamily = titleFontFamily(),
             color = colors.pageTitle,
             modifier = Modifier.alignByBaseline(),
         )
@@ -842,7 +839,7 @@ private fun TimelineNoteRow(
         Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.Top) {
             Text(
                 modifier = Modifier.padding(start = 12.dp, top = 6.dp).defaultMinSize(minWidth = 28.dp),
-                fontFamily = FontFamily(Font(Res.font.Merriweather_Light)),
+                fontFamily = titleFontFamily(),
                 text = "$index.",
                 color = colors.primaryText.copy(alpha = 0.33f),
                 textAlign = TextAlign.Center,

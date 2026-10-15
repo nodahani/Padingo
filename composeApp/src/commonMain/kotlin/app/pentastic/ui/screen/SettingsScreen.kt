@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.ui.composables.CalendarSelectionDialog
@@ -47,14 +46,12 @@ import app.pentastic.ui.composables.WeekStartSelectionDialog
 import app.pentastic.ui.composables.ThemeSelectionDialog
 import app.pentastic.ui.composables.LanguageSelectionDialog
 import app.pentastic.ui.theme.AppTheme
+import app.pentastic.ui.theme.titleFontFamily
 import app.pentastic.ui.theme.AppTheme.colors
 import app.pentastic.ui.theme.captionBarHeight
 import app.pentastic.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.Font
 import org.koin.compose.viewmodel.koinViewModel
-import pentastic.composeapp.generated.resources.Merriweather_Light
-import pentastic.composeapp.generated.resources.Res
 
 @Composable
 fun SettingsScreen(
@@ -92,7 +89,7 @@ fun SettingsScreen(
             style = TextStyle(
                 color = colors.pageTitle,
                 fontSize = 36.sp,
-                fontFamily = FontFamily(Font(Res.font.Merriweather_Light))
+                fontFamily = titleFontFamily()
             ),
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 6.dp)
         )

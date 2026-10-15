@@ -34,19 +34,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.data.Page
 import app.pentastic.ui.theme.AppTheme
+import app.pentastic.ui.theme.titleFontFamily
 import app.pentastic.ui.theme.AppTheme.colors
 import app.pentastic.ui.viewmodel.MainViewModel
-import org.jetbrains.compose.resources.Font
 import org.koin.compose.viewmodel.koinViewModel
-import pentastic.composeapp.generated.resources.Merriweather_Light
-import pentastic.composeapp.generated.resources.Res
 import kotlin.time.ExperimentalTime
 
 @Composable
@@ -71,7 +68,7 @@ fun ArchiveScreen(onNavigateBack: () -> Unit) {
                 style = TextStyle(
                     color = colors.pageTitle,
                     fontSize = 36.sp,
-                    fontFamily = FontFamily(Font(Res.font.Merriweather_Light))
+                    fontFamily = titleFontFamily()
                 )
             )
         }

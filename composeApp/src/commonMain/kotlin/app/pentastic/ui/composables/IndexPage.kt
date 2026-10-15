@@ -82,7 +82,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
@@ -98,15 +97,13 @@ import app.pentastic.data.WeekStart
 import app.pentastic.data.PageType
 import app.pentastic.data.ThemeMode
 import app.pentastic.ui.theme.AppTheme
+import app.pentastic.ui.theme.titleFontFamily
 import app.pentastic.ui.theme.AppTheme.colors
 import app.pentastic.ui.theme.appRadioButtonColors
 import app.pentastic.ui.theme.appSwitchColors
 import app.pentastic.ui.viewmodel.MainViewModel
-import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
-import pentastic.composeapp.generated.resources.Merriweather_Light
-import pentastic.composeapp.generated.resources.Res
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.time.ExperimentalTime
@@ -186,7 +183,7 @@ fun IndexPage(
                 style = TextStyle(
                     color = colors.pageTitle,
                     fontSize = 36.sp,
-                    fontFamily = FontFamily(Font(Res.font.Merriweather_Light))
+                    fontFamily = titleFontFamily()
                 )
             )
             if (isReorderMode) {
