@@ -668,11 +668,12 @@ class MainViewModel(
                 // temp dir), not a fresh install: don't seed the samples again
                 if (repository.getRootPages().first().isNotEmpty()) return@launch
 
-                // Seed with the saved language, which defaults to Farsi. Seeding
-                // runs before the user can change the setting, and the texts are
-                // stored content, so later language changes don't rewrite them
+                // Seed in the language the user chose on the welcome screen
+                // (the welcome flow writes it before the home screen — and this
+                // seeding — ever runs). Texts are stored content, so later
+                // language changes don't rewrite them.
                 val seed = OnboardingSeedTexts(
-                    AppLanguage.fromOrdinal(dataStoreRepository.language.first()) == AppLanguage.FARSI
+                    AppLanguage.fromOrdinal(dataStoreRepository.languageOnce()) == AppLanguage.FARSI
                 )
 
                 val pageTodo = repository.insertPage(Page(name = seed.pageTodo))
