@@ -12,7 +12,6 @@ import app.pentastic.data.ThemeMode
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.WeekStart
-import app.pentastic.data.deviceAppLanguage
 import app.pentastic.notification.ReminderScheduler
 import app.pentastic.notification.nextFutureReminderTime
 import app.pentastic.utils.hasBeenHours
@@ -45,7 +44,7 @@ class MainViewModel(
     private val _themeMode = MutableStateFlow(ThemeMode.DAY_NIGHT)
     val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
-    private val _language = MutableStateFlow(AppLanguage.ENGLISH)
+    private val _language = MutableStateFlow(AppLanguage.FARSI)
     val language: StateFlow<AppLanguage> = _language.asStateFlow()
 
     private val _calendar = MutableStateFlow(AppCalendar.GREGORIAN)
@@ -669,10 +668,12 @@ class MainViewModel(
                 // temp dir), not a fresh install: don't seed the samples again
                 if (repository.getRootPages().first().isNotEmpty()) return@launch
 
-                // Seed in the device's language: this runs before the user can
-                // pick a language in the app, and the texts are stored content,
-                // so later language changes don't rewrite them
-                val seed = OnboardingSeedTexts(deviceAppLanguage() == AppLanguage.FARSI)
+                // Seed with the saved language, which defaults to Farsi. Seeding
+                // runs before the user can change the setting, and the texts are
+                // stored content, so later language changes don't rewrite them
+                val seed = OnboardingSeedTexts(
+                    AppLanguage.fromOrdinal(dataStoreRepository.language.first()) == AppLanguage.FARSI
+                )
 
                 val pageTodo = repository.insertPage(Page(name = seed.pageTodo))
                 repository.insertNote(

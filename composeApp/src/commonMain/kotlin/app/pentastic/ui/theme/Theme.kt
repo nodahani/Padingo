@@ -72,7 +72,7 @@ val DarkColors = AppColors(
 val LocalAppColors = staticCompositionLocalOf { LightColors }
 val LocalAppCalendar = staticCompositionLocalOf { AppCalendar.GREGORIAN }
 val LocalWeekStart = staticCompositionLocalOf { WeekStart.MONDAY }
-val LocalDateTexts = staticCompositionLocalOf { DateTexts(AppLanguage.ENGLISH, AppCalendar.GREGORIAN) }
+val LocalDateTexts = staticCompositionLocalOf { DateTexts(AppLanguage.FARSI, AppCalendar.GREGORIAN) }
 
 object AppTheme {
     val colors: AppColors
@@ -135,7 +135,7 @@ fun isDayNightDark(): Boolean {
 @Composable
 fun AppTheme(
     themeMode: ThemeMode = ThemeMode.DAY_NIGHT,
-    language: AppLanguage = AppLanguage.ENGLISH,
+    language: AppLanguage = AppLanguage.FARSI,
     calendar: AppCalendar = AppCalendar.GREGORIAN,
     weekStart: WeekStart = WeekStart.MONDAY,
     content: @Composable () -> Unit,
