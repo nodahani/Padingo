@@ -1,5 +1,7 @@
 package app.pentastic.ui.viewmodel
 
+import app.pentastic.data.AppLanguage
+
 /**
  * The sample pages and notes written to a fresh install, in the app's saved
  * language (Farsi by default). They are stored content, not UI labels, so
@@ -43,4 +45,29 @@ internal class OnboardingSeedTexts(isFarsi: Boolean) {
         if (isFarsi) "کارهای اولویت‌دار قرمز دیده می‌شن. روی هر کار ضربه بزن تا اولویتش رو عوض کنی. 👆"
         else "Priority tasks will appear in red. Tap on any task to change priority. 👆"
     val dontDoTextOkay = if (isFarsi) "اشکالی نداره... همه لازمش داریم. :D" else "It's okay... we all need this list. :D"
+
+    companion object {
+        /** (English name, Farsi name) of every seeded page, keyed by nothing — for renaming untouched seed pages on a language switch. */
+        val pageNamePairs: List<Pair<String, String>> = listOf(
+            "Todo" to "کارها",
+            "Reminders" to "یادآورها",
+            "Stuff" to "گوناگون",
+            "To do" to "انجام بدم",
+            "Read" to "بخونم",
+            "Watch" to "ببینم",
+            "Notes" to "یادداشت‌ها",
+            "Ideas" to "ایده‌ها",
+            "Don't do" to "کار نکن",
+            "Timeline" to "خط زمانی",
+        )
+
+        /** The seed name in [language] for a page currently named [name]; null when [name] is not an untouched seed name. */
+        fun translatedName(name: String, from: AppLanguage, to: AppLanguage): String? {
+            if (from == to) return null
+            return when (from) {
+                AppLanguage.ENGLISH -> pageNamePairs.firstOrNull { it.first == name }?.second
+                AppLanguage.FARSI -> pageNamePairs.firstOrNull { it.second == name }?.first
+            }
+        }
+    }
 }
