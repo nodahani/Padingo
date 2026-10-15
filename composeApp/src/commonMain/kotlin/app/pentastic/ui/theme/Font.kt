@@ -55,7 +55,7 @@ private fun vazirmatnFontFamily() = FontFamily(
 fun titleFontFamily(weight: FontWeight = FontWeight.Light): FontFamily {
     if (AppTheme.dateTexts.language == AppLanguage.FARSI) return vazirmatnFontFamily()
     return when (weight) {
-        FontWeight.Regular -> FontFamily(Font(Res.font.Merriweather_Regular, weight))
+        FontWeight.Normal -> FontFamily(Font(Res.font.Merriweather_Regular, weight))
         else -> FontFamily(Font(Res.font.Merriweather_Light, weight))
     }
 }
