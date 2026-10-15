@@ -565,11 +565,15 @@ class MainViewModel(
      * longer matches a sample name and is left alone.
      */
     private suspend fun syncSeedPageNames(from: AppLanguage, to: AppLanguage) {
-        val pages = repository.getAllPages().first()
-        val updates = pages.mapNotNull { page ->
-            OnboardingSeedTexts.translatedName(page.name, from, to)
-                ?.let { page.copy(name = it) }
-        }
+        val updates = (
+            repository.getAllPages().first() +
+                repository.getArchivedPages().first() +
+                repository.getTrashedPages().first()
+            )
+            .mapNotNull { page ->
+                OnboardingSeedTexts.translatedName(page.name, from, to)
+                    ?.let { page.copy(name = it) }
+            }
         if (updates.isNotEmpty()) repository.updatePages(updates)
     }
 
