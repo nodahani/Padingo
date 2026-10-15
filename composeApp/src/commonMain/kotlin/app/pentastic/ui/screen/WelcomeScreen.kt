@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pentastic.data.AppCalendar
 import app.pentastic.data.AppLanguage
-import app.pentastic.ui.composables.appRadioButtonColors
+import app.pentastic.ui.theme.appRadioButtonColors
 import app.pentastic.ui.theme.AppTheme
 import app.pentastic.ui.theme.titleFontFamily
 
