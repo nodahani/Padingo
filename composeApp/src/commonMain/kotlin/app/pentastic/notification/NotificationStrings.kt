@@ -25,7 +25,7 @@ class NotificationStrings(private val language: AppLanguage) {
             RepeatFrequency.DAILY -> "یادآور روزانه"
             RepeatFrequency.WEEKLY -> "یادآور هفتگی"
             RepeatFrequency.MONTHLY -> "یادآور ماهانه"
-            RepeatFrequency.QUARTERLY -> "یادآور فصلی"
+            RepeatFrequency.QUARTERLY -> "یادآور سه‌ماهه"
             RepeatFrequency.YEARLY -> "یادآور سالانه"
             RepeatFrequency.NONE -> todoReminder()
         }
@@ -33,8 +33,8 @@ class NotificationStrings(private val language: AppLanguage) {
     /** "Mark as done" notification action / "انجام شد" (matches the app's markDone string). */
     fun markAsDone(): String = if (isFarsi) "انجام شد" else "Mark as done"
 
-    /** "Snooze (1 hour)" notification action / "تعویق (۱ ساعت)". */
-    fun snoozeOneHour(): String = if (isFarsi) "تعویق (۱ ساعت)" else "Snooze (1 hour)"
+    /** "Snooze (1 hour)" notification action / "یادآوری ۱ ساعت دیگر". */
+    fun snoozeOneHour(): String = if (isFarsi) "یادآوری ۱ ساعت دیگر" else "Snooze (1 hour)"
 
     /** Notification channel name / "یادآورها". */
     fun channelName(): String = if (isFarsi) "یادآورها" else "Reminders"
