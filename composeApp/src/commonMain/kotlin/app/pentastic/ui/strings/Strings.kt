@@ -36,6 +36,7 @@ interface AppStrings {
     val enable: String
     val disable: String
     val addSubPage: String
+    fun subPageTarget(name: String): String
     val switchToNotes: String
     val switchToTasks: String
     val rename: String
@@ -161,6 +162,7 @@ object EnglishStrings : AppStrings {
     override val enable = "Enable"
     override val disable = "Disable"
     override val addSubPage = "Add sub-page"
+    override fun subPageTarget(name: String) = "to $name"
     override val switchToNotes = "Switch to Notes"
     override val switchToTasks = "Switch to Tasks"
     override val rename = "Rename"
@@ -342,6 +344,7 @@ object FarsiStrings : AppStrings {
     override val enable = "فعال کردن"
     override val disable = "غیرفعال کردن"
     override val addSubPage = "افزودن زیرصفحه"
+    override fun subPageTarget(name: String) = "به $name"
     override val switchToNotes = "تبدیل به یادداشت‌ها"
     override val switchToTasks = "تبدیل به کارها"
     override val rename = "تغییر نام"
