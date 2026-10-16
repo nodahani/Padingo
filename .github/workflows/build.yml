@@ -2,7 +2,7 @@ name: Build APKs
 
 on:
   push:
-    branches: [ feature/farsi-localization ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
