@@ -159,11 +159,12 @@ fun classifyDueDate(
 fun Note.repeatOccurrenceDate(
     today: LocalDate,
     timeZone: TimeZone = TimeZone.currentSystemDefault(),
+    calendar: AppCalendar = AppCalendar.GREGORIAN,
 ): LocalDate? {
     val frequency = RepeatFrequency.fromOrdinal(repeatFrequency)
     if (frequency == RepeatFrequency.NONE) return null
     val base = when {
-        taskLastDoneAt > 0 -> nextRepeatDate(epochMillisToLocalDate(taskLastDoneAt, timeZone), frequency)
+        taskLastDoneAt > 0 -> nextRepeatDate(epochMillisToLocalDate(taskLastDoneAt, timeZone), frequency, calendar)
         repeatTaskStartFrom > 0 -> epochMillisToLocalDate(repeatTaskStartFrom, timeZone)
         else -> today
     }
@@ -186,7 +187,7 @@ fun classifyRepeatTask(
     weekStart: WeekStart = WeekStart.MONDAY,
 ): TimelineBucket? {
     val frequency = RepeatFrequency.fromOrdinal(note.repeatFrequency)
-    val occurrence = note.repeatOccurrenceDate(today, timeZone) ?: return null
+    val occurrence = note.repeatOccurrenceDate(today, timeZone, calendar) ?: return null
     if (!note.done && occurrence < today) return TimelineBucket.Section(TimelineSection.OVERDUE)
     val horizon = when (frequency) {
         RepeatFrequency.NONE -> return null

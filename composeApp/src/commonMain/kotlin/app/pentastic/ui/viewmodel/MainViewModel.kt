@@ -366,7 +366,7 @@ class MainViewModel(
             val completedRepeatingNotes = repository.getCompletedRepeatingNotes()
             val notesToReset = completedRepeatingNotes.filter { note ->
                 val frequency = RepeatFrequency.fromOrdinal(note.repeatFrequency)
-                note.taskLastDoneAt.hasRepeatIntervalPassed(frequency)
+                note.taskLastDoneAt.hasRepeatIntervalPassed(frequency, calendar.value)
             }
             if (notesToReset.isNotEmpty()) {
                 val now = Clock.System.now().toEpochMilliseconds()
