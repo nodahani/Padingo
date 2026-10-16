@@ -100,6 +100,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        // A FIXED debug keystore committed to the fork: CI runners otherwise
+        // generate a fresh debug key on every build, which Android treats as a
+        // different app publisher and refuses to update over. With this file
+        // every debug APK keeps the same signature, so installs update in
+        // place without uninstalling (data survives). Safe to commit: it is a
+        // well-known debug key, not a release secret.
+        getByName("debug") {
+            storeFile = rootProject.file("keystores/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
@@ -108,6 +122,7 @@ android {
         getByName("debug") {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
