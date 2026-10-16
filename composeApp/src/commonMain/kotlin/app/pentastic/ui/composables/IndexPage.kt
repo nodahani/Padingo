@@ -1017,7 +1017,7 @@ fun AddSubPageDialog(
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(strings.addSubPage, color = colors.primaryText, fontWeight = FontWeight.Medium, fontSize = 18.sp)
-                Text("to ${parentPage.name}", color = colors.primaryText.copy(alpha = 0.5f), fontSize = 14.sp)
+                Text(strings.subPageTarget(parentPage.name), color = colors.primaryText.copy(alpha = 0.5f), fontSize = 14.sp)
                 Spacer(Modifier.height(20.dp))
                 BasicTextField(
                     value = text.take(20),
