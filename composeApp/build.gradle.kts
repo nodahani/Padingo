@@ -89,11 +89,14 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "app.pentastic"
+        // The permanent app identity. Chosen once — changing it after the
+        // first public release would strand every user's updates.
+        applicationId = "app.padingo"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 31
-        versionName = "v0.30-fa.1"
+        // Fresh numbering for the new identity (independent of upstream's)
+        versionCode = 1
+        versionName = "1.0.0"
     }
     packaging {
         resources {
