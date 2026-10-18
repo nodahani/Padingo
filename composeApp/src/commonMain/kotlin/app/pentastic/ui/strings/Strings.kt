@@ -332,8 +332,8 @@ object FarsiStrings : AppStrings {
     override val share = "اشتراک‌گذاری"
     override val rate = "امتیاز دادن"
     override val shareText =
-        "با پدینگو کارهات رو انجام بده!\nhttps://github.com/nodahani/Pentastic"
-    override val creditsTitle = "ساخته‌شده با عشق بر پایه‌ی Pentastic"
+        "!با پدینگو کارهات رو انجام بده\nhttps://github.com/nodahani/Padingo"
+    override val creditsTitle = "توسعه یافته با عشق بر پایه‌ی Pentastic"
     override val creditsBody = "پدینگو فارسی‌سازی و توسعه‌ی Pentastic اثر Tanuj است. ممنون از پایه‌ی عالی‌ش!"
 
     // Index page
