@@ -216,7 +216,7 @@ fun IndexPage(
                                     onClick = {
                                         showTopMenu = false
                                         viewModel.onRateClicked()
-                                        uriHandler.openUri("https://play.google.com/store/apps/details?id=app.pentastic")
+                                        uriHandler.openUri("https://github.com/nodahani/Pentastic")
                                     },
                                     leadingIcon = {
                                         Icon(

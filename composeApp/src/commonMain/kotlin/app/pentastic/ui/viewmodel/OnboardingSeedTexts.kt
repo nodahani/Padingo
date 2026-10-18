@@ -10,7 +10,7 @@ import app.pentastic.data.AppLanguage
  */
 internal class OnboardingSeedTexts(isFarsi: Boolean) {
     val pageTodo = if (isFarsi) "کارها" else "Todo"
-    val todoInstall = if (isFarsi) "پنتاستیک رو نصب کن!" else "Install Pentastic!"
+    val todoInstall = if (isFarsi) "پدینگو رو نصب کن!" else "Install Padingo!"
     val todoDoubleTap = if (isFarsi) "دو ضربه بزن تا کار انجام‌شده علامت بخوره. ✔" else "Double tap to mark a task as done. ✔"
     val todoSingleTap = if (isFarsi) "برای باز کردن منو یه ضربه بزن؛ برای جابه‌جایی نگهش دار." else "Single tap for menu; long press to reorder."
     val todoSwipe = if (isFarsi) "و از راست بکش... چون ما دوتایی به هم میایم. 😎" else "And swipe right... because we're a perfect match. 😎"

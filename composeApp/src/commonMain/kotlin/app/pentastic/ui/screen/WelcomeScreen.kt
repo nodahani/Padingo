@@ -59,7 +59,7 @@ fun WelcomeScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = label(language, "به کاره خوش اومدی!", "Welcome to Pentastic!"),
+                text = label(language, "به پدینگو خوش اومدی!", "Welcome to Padingo!"),
                 color = colors.pageTitle,
                 fontSize = 30.sp,
                 fontFamily = titleFontFamily()
