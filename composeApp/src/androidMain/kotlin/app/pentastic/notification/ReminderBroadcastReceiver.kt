@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import app.pentastic.MainActivity
-import app.pentastic.R
+import app.padingo.R
 import app.pentastic.data.AppLanguage
 import app.pentastic.data.DataStoreRepository
 import app.pentastic.data.RepeatFrequency
@@ -123,7 +123,7 @@ class ReminderBroadcastReceiver : BroadcastReceiver(), KoinComponent {
             )
 
             val markDoneIntent = Intent(context, MarkDoneReceiver::class.java).apply {
-                action = "app.pentastic.ACTION_MARK_DONE"
+                action = "app.padingo.ACTION_MARK_DONE"
                 putExtra("note_uuid", noteUuid)
             }
 
@@ -135,7 +135,7 @@ class ReminderBroadcastReceiver : BroadcastReceiver(), KoinComponent {
             )
 
             val snoozeIntent = Intent(context, SnoozeReceiver::class.java).apply {
-                action = "app.pentastic.ACTION_SNOOZE"
+                action = "app.padingo.ACTION_SNOOZE"
                 putExtra("note_uuid", noteUuid)
             }
 

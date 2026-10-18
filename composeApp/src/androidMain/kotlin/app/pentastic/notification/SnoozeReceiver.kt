@@ -41,7 +41,7 @@ class SnoozeReceiver : BroadcastReceiver(), KoinComponent {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             val alarmIntent = Intent(context, ReminderBroadcastReceiver::class.java).apply {
-                action = "app.pentastic.REMINDER_NOTIFICATION"
+                action = "app.padingo.REMINDER_NOTIFICATION"
                 putExtra("note_uuid", note.uuid)
                 putExtra("note_text", note.text)
                 putExtra("note_page_id", note.pageId)

@@ -25,7 +25,7 @@ class AndroidReminderScheduler(
         if (note.reminderAt <= 0 || note.reminderEnabled == 0) return
 
         val intent = Intent(context, ReminderBroadcastReceiver::class.java).apply {
-            action = "app.pentastic.REMINDER_NOTIFICATION"
+            action = "app.padingo.REMINDER_NOTIFICATION"
             putExtra("note_id", note.id)
             putExtra("note_uuid", note.uuid)
             putExtra("note_text", note.text)
@@ -66,7 +66,7 @@ class AndroidReminderScheduler(
         // Must mirror scheduleReminder's action: PendingIntent lookup matches on
         // Intent.filterEquals, so a missing action means FLAG_NO_CREATE never finds it
         val intent = Intent(context, ReminderBroadcastReceiver::class.java).apply {
-            action = "app.pentastic.REMINDER_NOTIFICATION"
+            action = "app.padingo.REMINDER_NOTIFICATION"
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
