@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="padingo-icons/source/padingo-icon-1024.png" width="120" alt="پدینگو"/>
+<img src="docs/logo-rounded.png" width="120" alt="پدینگو"/>
 
 # پدینگو | Padingo
 
@@ -31,11 +31,15 @@
 - 🌗 پوسته‌ی روشن و تیره
 - 🇮🇷 رابط کاملاً فارسی و راست‌به‌چپ
 
-<!-- 📸 اسکرین‌شات‌ها: تصاویر را در پوشه‌ی docs/ بگذارید و کامنت زیر را باز کنید
 <div align="center">
-<img src="docs/screen-1.png" width="250"/> <img src="docs/screen-2.png" width="250"/> <img src="docs/screen-3.png" width="250"/>
+<img src="docs/screen_1.jpg" width="250" hspace="6"/>
+<img src="docs/screen_2.jpg" width="250" hspace="6"/>
+<img src="docs/screen_3.jpg" width="250" hspace="6"/>
+<img src="docs/screen_4.jpg" width="250" hspace="6"/>
+<img src="docs/screen_5.jpg" width="250" hspace="6"/>
+<img src="docs/screen_6.jpg" width="250" hspace="6"/>
+<img src="docs/screen_7.jpg" width="250" hspace="6"/>
 </div>
--->
 
 ## حریم خصوصی و پشتیبان‌گیری
 
