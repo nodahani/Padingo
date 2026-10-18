@@ -22,9 +22,8 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :composeApp:assembleDebug
 
-      # Smoke-tests the R8/minify config: the release build must keep compiling
-      # as proguard rules evolve. The APK stays unsigned, so it is not
-      # installable — signing comes later with a keystore.
+      # Smoke-tests the R8/minify config and produces the distributable
+      # release APK, signed from the repo secrets when they exist.
       - name: Build release APK (unsigned, runs R8)
         run: ./gradlew :composeApp:assembleRelease
 
