@@ -55,6 +55,15 @@ class ReminderBroadcastReceiver : BroadcastReceiver(), KoinComponent {
                 return@launch
             }
 
+            // A note whose parent page was trashed or archived after the alarm
+            // was set must stay silent too; rescheduling re-arms it if the page
+            // ever becomes visible again
+            val page = database.pageDao.getPageById(note.pageId)
+            if (page == null || page.deletedAt > 0 || page.archivedAt > 0) {
+                reminderScheduler.cancelReminder(noteUuid)
+                return@launch
+            }
+
             val isRepeatingTask = note.repeatFrequency > 0
             val frequency = RepeatFrequency.fromOrdinal(note.repeatFrequency)
 

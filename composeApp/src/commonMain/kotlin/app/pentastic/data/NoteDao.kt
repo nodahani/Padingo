@@ -28,7 +28,10 @@ interface NoteDao {
     @Query("SELECT * FROM note WHERE repeatFrequency > 0 AND taskLastDoneAt > 0 AND done = 1 AND deletedAt = 0")
     suspend fun getCompletedRepeatingNotes(): List<Note>
 
-    @Query("SELECT * FROM note WHERE reminderEnabled = 1 AND reminderAt > 0 AND deletedAt = 0")
+    // Only notes whose parent page is still visible: a trashed (deletedAt)
+    // or archived page must not resurface through rescheduling on app
+    // start / reboot
+    @Query("SELECT * FROM note WHERE reminderEnabled = 1 AND reminderAt > 0 AND deletedAt = 0 AND pageId IN (SELECT id FROM page WHERE deletedAt = 0 AND archivedAt = 0)")
     suspend fun getNotesWithActiveReminders(): List<Note>
 
     @Query("SELECT * FROM note WHERE id = :id")
