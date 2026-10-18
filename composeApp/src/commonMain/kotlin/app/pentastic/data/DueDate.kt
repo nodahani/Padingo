@@ -196,7 +196,12 @@ fun classifyRepeatTask(
         RepeatFrequency.MONTHLY,
         RepeatFrequency.QUARTERLY -> today.plus(1, DateTimeUnit.DAY)
 
-        RepeatFrequency.YEARLY -> today.plus(7 - today.dayOfWeek.isoDayNumber, DateTimeUnit.DAY)
+        RepeatFrequency.YEARLY -> {
+            // Yearly tasks surface once their calendar week begins — measured
+            // against the user's week-start setting, not a fixed ISO week
+            val daysIntoWeek = (today.dayOfWeek.isoDayNumber - weekStart.isoWeekday + 7) % 7
+            today.plus(6 - daysIntoWeek, DateTimeUnit.DAY)
+        }
     }
     if (occurrence > horizon) return null
     // A done task whose comeback date is not in the future just means the reset
