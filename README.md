@@ -32,13 +32,10 @@
 - 🇮🇷 رابط کاملاً فارسی و راست‌به‌چپ
 
 <div align="center">
-<img src="docs/screen_1.jpg" width="250" hspace="6"/>
-<img src="docs/screen_2.jpg" width="250" hspace="6"/>
-<img src="docs/screen_3.jpg" width="250" hspace="6"/>
-<img src="docs/screen_4.jpg" width="250" hspace="6"/>
-<img src="docs/screen_5.jpg" width="250" hspace="6"/>
-<img src="docs/screen_6.jpg" width="250" hspace="6"/>
-<img src="docs/screen_7.jpg" width="250" hspace="6"/>
+<img src="docs/screen-index.png" width="220" hspace="6"/>
+<img src="docs/screen-today.png" width="220" hspace="6"/>
+<img src="docs/screen-tasks.png" width="220" hspace="6"/>
+<img src="docs/screen-page.png" width="220" hspace="6"/>
 </div>
 
 ## حریم خصوصی و پشتیبان‌گیری
