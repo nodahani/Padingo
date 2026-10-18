@@ -1,9 +1,21 @@
-<div dir="rtl">
+<div align="center">
+
+<img src="padingo-icons/source/padingo-icon-1024.png" width="120" alt="پدینگو"/>
 
 # پدینگو | Padingo
 
-کارها و یادداشت‌هایت را ساده، سریع و کاملاً آفلاین مدیریت کن.
-پدینگو نسخه‌ی فارسیِ [Pentastic](https://github.com/tanujnotes/Pentastic) است.
+**کارها و یادداشت‌هایت را ساده، سریع و کاملاً آفلاین مدیریت کن.**
+
+[![مجوز](https://img.shields.io/github/license/nodahani/Padingo?label=%D9%85%D8%AC%D9%88%D8%B2)](LICENSE)
+[![نسخه](https://img.shields.io/github/v/release/nodahani/Padingo?label=%D9%86%D8%B3%D8%AE%D9%87)](https://github.com/nodahani/Padingo/releases)
+[![Android](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://github.com/nodahani/Padingo/releases)
+[![ستاره‌ها](https://img.shields.io/github/stars/nodahani/Padingo?style=social)](https://github.com/nodahani/Padingo/stargazers)
+
+نسخه‌ی فارسیِ [Pentastic](https://github.com/tanujnotes/Pentastic)
+
+</div>
+
+<div dir="rtl">
 
 ## درباره‌ی پدینگو
 
@@ -18,6 +30,12 @@
 - 📅 تقویم شمسی و میلادی، با انتخاب شروع هفته (شنبه، یکشنبه یا دوشنبه)
 - 🌗 پوسته‌ی روشن و تیره
 - 🇮🇷 رابط کاملاً فارسی و راست‌به‌چپ
+
+<!-- 📸 اسکرین‌شات‌ها: تصاویر را در پوشه‌ی docs/ بگذارید و کامنت زیر را باز کنید
+<div align="center">
+<img src="docs/screen-1.png" width="250"/> <img src="docs/screen-2.png" width="250"/> <img src="docs/screen-3.png" width="250"/>
+</div>
+-->
 
 ## حریم خصوصی و پشتیبان‌گیری
 
