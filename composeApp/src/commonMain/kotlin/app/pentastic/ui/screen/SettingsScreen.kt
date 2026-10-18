@@ -36,13 +36,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,8 +51,10 @@ import app.pentastic.ui.theme.AppTheme
 import app.pentastic.ui.theme.titleFontFamily
 import app.pentastic.ui.theme.AppTheme.colors
 import app.pentastic.ui.theme.captionBarHeight
+import app.pentastic.AppSharer
 import app.pentastic.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -64,8 +63,7 @@ fun SettingsScreen(
 ) {
     val viewModel = koinViewModel<MainViewModel>()
     val uriHandler = LocalUriHandler.current
-    val clipboardManager = LocalClipboardManager.current
-    val coroutineScope = rememberCoroutineScope()
+    val appSharer = koinInject<AppSharer>()
     val strings = AppTheme.strings
 
     val themeMode by viewModel.themeMode.collectAsState()
@@ -173,9 +171,7 @@ fun SettingsScreen(
             icon = { Icon(Icons.Default.Share, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
             title = strings.share,
             onClick = {
-                coroutineScope.launch {
-                    clipboardManager.setText(AnnotatedString(strings.shareText))
-                }
+                appSharer.share(strings.shareText)
             }
         )
         SettingsItem(

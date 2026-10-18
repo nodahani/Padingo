@@ -149,7 +149,7 @@ object EnglishStrings : AppStrings {
     override val share = "Share"
     override val rate = "Rate"
     override val shareText =
-        "Get things done with Padingo!"
+        "Get things done with Padingo!\nhttps://github.com/nodahani/Pentastic"
     override val creditsTitle = "Made with ❤ by"
     override val creditsBody = "Pentastic by Tanuj — the original app this project is built on. Thanks for the great foundation!"
 
@@ -332,7 +332,7 @@ object FarsiStrings : AppStrings {
     override val share = "اشتراک‌گذاری"
     override val rate = "امتیاز دادن"
     override val shareText =
-        "با پدینگو کارهات رو انجام بده!"
+        "با پدینگو کارهات رو انجام بده!\nhttps://github.com/nodahani/Pentastic"
     override val creditsTitle = "ساخته‌شده با ❤ بر پایه‌ی"
     override val creditsBody = "این اپ بازنویسی‌ی فارسیِ Pentastic اثر Tanuj است. ممنون از پایه‌ی عالی‌ش!"
 

@@ -1,5 +1,6 @@
 package app.pentastic.di
 
+import app.pentastic.AppSharer
 import app.pentastic.db.DatabaseFactory
 import app.pentastic.db.createDataStore
 import app.pentastic.notification.ReminderScheduler
@@ -13,5 +14,6 @@ actual val platformModule: Module
         single { createDataStore(androidApplication()) }
         single { DatabaseFactory(androidApplication()) }
         single { ReminderSchedulerFactory(androidApplication(), get()) }
+        single { AppSharer(androidApplication()) }
         single<ReminderScheduler> { get<ReminderSchedulerFactory>().create() }
     }
