@@ -149,7 +149,7 @@ object EnglishStrings : AppStrings {
     override val share = "Share"
     override val rate = "Rate"
     override val shareText =
-        "Get things done with Padingo!\nhttps://github.com/nodahani/Pentastic"
+        "Get things done with Padingo!\nhttps://github.com/nodahani/Padingo"
     override val creditsTitle = "Made with love, based on Pentastic"
     override val creditsBody = "Padingo is a Persian edition of Pentastic by Tanuj, developed on top of it. Thanks for the great foundation!"
 

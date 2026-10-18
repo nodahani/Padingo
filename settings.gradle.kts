@@ -1,4 +1,4 @@
-rootProject.name = "Pentastic"
+rootProject.name = "Padingo"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

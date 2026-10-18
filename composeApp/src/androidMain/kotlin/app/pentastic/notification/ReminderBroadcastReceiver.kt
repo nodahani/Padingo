@@ -156,7 +156,7 @@ class ReminderBroadcastReceiver : BroadcastReceiver(), KoinComponent {
             )
 
             val notification = NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_pentastic_small)
+                .setSmallIcon(R.drawable.ic_padingo_small)
                 .setContentTitle(note.text)
                 .setContentText(notificationBody)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

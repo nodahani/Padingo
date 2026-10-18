@@ -18,7 +18,7 @@ fun main() {
                 height = 720.dp,
                 position = WindowPosition(Alignment.Center)
             ),
-            title = "Pentastic"
+            title = "Padingo"
         ) {
             App()
         }

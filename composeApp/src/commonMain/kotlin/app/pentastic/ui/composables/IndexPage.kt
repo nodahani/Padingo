@@ -216,7 +216,7 @@ fun IndexPage(
                                     onClick = {
                                         showTopMenu = false
                                         viewModel.onRateClicked()
-                                        uriHandler.openUri("https://github.com/nodahani/Pentastic")
+                                        uriHandler.openUri("https://github.com/nodahani/Padingo")
                                     },
                                     leadingIcon = {
                                         Icon(
