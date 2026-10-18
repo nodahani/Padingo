@@ -160,6 +160,14 @@ dependencies {
     add("kspJvm", libs.androidx.room.compiler)
 }
 
+compose.resources {
+    // The generated Res class package is derived from the root project name.
+    // Pinning it to the historical package keeps the Pentastic->Padingo
+    // rename source-compatible: the many resource imports in the code stay
+    // valid while the project itself is branded Padingo.
+    packageOfResClass = "pentastic.composeapp.generated.resources"
+}
+
 compose.desktop {
     application {
         // The Kotlin sources stayed in app.pentastic.* — only the Android
