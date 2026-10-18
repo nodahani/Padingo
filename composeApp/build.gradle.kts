@@ -162,7 +162,9 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "app.padingo.MainKt"
+        // The Kotlin sources stayed in app.pentastic.* — only the Android
+        // applicationId/namespace moved to app.padingo
+        mainClass = "app.pentastic.MainKt"
         jvmArgs += listOf("-Xdock:name=padingo")
 
         nativeDistributions {
@@ -175,7 +177,9 @@ compose.desktop {
             macOS {
                 bundleID = "app.padingo"
                 dockName = "padingo"
-                iconFile.set(project.file("icons/padingo.icns"))
+                // The .icns asset kept its original file name; the bundle
+                // and dock are branded padingo above
+                iconFile.set(project.file("icons/Pentastic.icns"))
             }
         }
     }
