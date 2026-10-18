@@ -23,6 +23,8 @@ interface AppStrings {
     val follow: String
     val share: String
     val rate: String
+    val creditsTitle: String
+    val creditsBody: String
     val shareText: String
 
     // Index page
@@ -149,7 +151,9 @@ object EnglishStrings : AppStrings {
     override val share = "Share"
     override val rate = "Rate"
     override val shareText =
-        "Get things done with Pentastic!\nhttps://play.google.com/store/apps/details?id=app.pentastic"
+        "Get things done with Padingo!"
+    override val creditsTitle = "Made with ❤ by"
+    override val creditsBody = "Pentastic by Tanuj — the original app this project is built on. Thanks for the great foundation!"
 
     // Index page
     override val index = "Index"
@@ -331,7 +335,9 @@ object FarsiStrings : AppStrings {
     override val share = "اشتراک‌گذاری"
     override val rate = "امتیاز دادن"
     override val shareText =
-        "با Pentastic کارهات رو انجام بده!\nhttps://play.google.com/store/apps/details?id=app.pentastic"
+        "با پدینگو کارهات رو انجام بده!"
+    override val creditsTitle = "ساخته‌شده با ❤ بر پایه‌ی"
+    override val creditsBody = "این اپ بازنویسی‌ی فارسیِ Pentastic اثر Tanuj است. ممنون از پایه‌ی عالی‌ش!"
 
     // Index page
     override val index = "فهرست"

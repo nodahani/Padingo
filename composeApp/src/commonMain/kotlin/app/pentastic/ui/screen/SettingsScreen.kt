@@ -2,6 +2,8 @@ package app.pentastic.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
@@ -23,7 +26,10 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ViewWeek
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -185,9 +191,58 @@ fun SettingsScreen(
             title = strings.rate,
             onClick = {
                 viewModel.onRateClicked()
-                uriHandler.openUri("https://play.google.com/store/apps/details?id=app.pentastic")
+                uriHandler.openUri("https://github.com/nodahani/Pentastic")
             }
         )
+
+        // Credits: a standalone, calm card — separated from the settings list.
+        // Tapping the card opens the original author's GitHub profile; the
+        // small chip opens the upstream repo for starring.
+        Spacer(Modifier.height(24.dp))
+        Card(
+            onClick = { uriHandler.openUri("https://github.com/tanujnotes") },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = colors.menuBackground),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = colors.pageTitle,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = strings.creditsTitle,
+                        fontSize = 13.sp,
+                        color = colors.hint
+                    )
+                }
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = strings.creditsBody,
+                    fontSize = 14.sp,
+                    color = colors.primaryText,
+                    lineHeight = 20.sp
+                )
+                Spacer(Modifier.height(12.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SuggestionChip(
+                        onClick = { uriHandler.openUri("https://github.com/tanujnotes") },
+                        label = { Text("@tanujnotes", fontSize = 13.sp) }
+                    )
+                    SuggestionChip(
+                        onClick = { uriHandler.openUri("https://github.com/tanujnotes/Pentastic") },
+                        label = { Text("⭐ Pentastic", fontSize = 13.sp) }
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(16.dp))
 
     }
 
