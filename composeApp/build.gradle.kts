@@ -179,7 +179,7 @@ compose.desktop {
                 dockName = "padingo"
                 // The .icns asset kept its original file name; the bundle
                 // and dock are branded padingo above
-                iconFile.set(project.file("icons/Pentastic.icns"))
+                iconFile.set(project.file("icons/padingo.icns"))
             }
         }
     }
