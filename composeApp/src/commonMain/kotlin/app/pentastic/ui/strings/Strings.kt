@@ -20,7 +20,6 @@ interface AppStrings {
     val theme: String
     val language: String
     val trash: String
-    val follow: String
     val share: String
     val rate: String
     val creditsTitle: String
@@ -147,7 +146,6 @@ object EnglishStrings : AppStrings {
     override val theme = "Theme"
     override val language = "Language"
     override val trash = "Trash"
-    override val follow = "Follow"
     override val share = "Share"
     override val rate = "Rate"
     override val shareText =
@@ -331,7 +329,6 @@ object FarsiStrings : AppStrings {
     override val theme = "پوسته"
     override val language = "زبان"
     override val trash = "سطل زباله"
-    override val follow = "دنبال کردن"
     override val share = "اشتراک‌گذاری"
     override val rate = "امتیاز دادن"
     override val shareText =

@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ViewWeek
@@ -170,13 +169,6 @@ fun SettingsScreen(
 
         HorizontalDivider(color = colors.divider.copy(alpha = 0.7f), modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp))
 
-        SettingsItem(
-            icon = { Icon(Icons.Default.PersonAdd, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
-            title = strings.follow,
-            onClick = {
-                uriHandler.openUri("https://x.com/tanujnotes")
-            }
-        )
         SettingsItem(
             icon = { Icon(Icons.Default.Share, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
             title = strings.share,
