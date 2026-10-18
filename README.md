@@ -6,10 +6,10 @@
 
 **کارها و یادداشت‌هایت را ساده، سریع و کاملاً آفلاین مدیریت کن.**
 
-[![مجوز](https://img.shields.io/github/license/nodahani/Padingo?label=%D9%85%D8%AC%D9%88%D8%B2)](LICENSE)
-[![نسخه](https://img.shields.io/github/v/release/nodahani/Padingo?label=%D9%86%D8%B3%D8%AE%D9%87)](https://github.com/nodahani/Padingo/releases)
-[![Android](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://github.com/nodahani/Padingo/releases)
-[![ستاره‌ها](https://img.shields.io/github/stars/nodahani/Padingo?style=social)](https://github.com/nodahani/Padingo/stargazers)
+[![License](https://img.shields.io/github/license/nodahani/Padingo?label=License)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/nodahani/Padingo?label=Release)](https://github.com/nodahani/Padingo/releases)
+[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://github.com/nodahani/Padingo/releases)
+[![Stars](https://img.shields.io/github/stars/nodahani/Padingo?style=social)](https://github.com/nodahani/Padingo/stargazers)
 
 نسخه‌ی فارسیِ [Pentastic](https://github.com/tanujnotes/Pentastic)
 
