@@ -29,9 +29,9 @@ class ReminderBroadcastReceiver : BroadcastReceiver(), KoinComponent {
     private val dataStoreRepository: DataStoreRepository by inject()
 
     override fun onReceive(context: Context, intent: Intent) {
+        // Text and page come from the fresh DB note below, never from the
+        // Intent — both can change between scheduling and delivery
         val noteUuid = intent.getStringExtra("note_uuid") ?: return
-        val noteText = intent.getStringExtra("note_text") ?: "Task reminder"
-        val notePageId = intent.getLongExtra("note_page_id", -1L)
         val isSnooze = intent.getBooleanExtra("is_snooze", false)
 
         val notificationManager = context.getSystemService(NotificationManager::class.java)
@@ -120,7 +120,7 @@ class ReminderBroadcastReceiver : BroadcastReceiver(), KoinComponent {
             // Build and show notification after DB lookup
             val openAppIntent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra("navigate_to_page_id", notePageId)
+                putExtra("navigate_to_page_id", note.pageId)
                 putExtra("note_uuid", noteUuid)
             }
 
@@ -157,7 +157,7 @@ class ReminderBroadcastReceiver : BroadcastReceiver(), KoinComponent {
 
             val notification = NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_pentastic_small)
-                .setContentTitle(noteText)
+                .setContentTitle(note.text)
                 .setContentText(notificationBody)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)

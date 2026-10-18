@@ -24,12 +24,13 @@ class AndroidReminderScheduler(
     override suspend fun scheduleReminder(note: Note) {
         if (note.reminderAt <= 0 || note.reminderEnabled == 0) return
 
+        // Only the identity goes into the Intent: title and navigation target
+        // are read from the database at delivery time, so later edits to the
+        // task (text or page) still reach the user correctly
         val intent = Intent(context, ReminderBroadcastReceiver::class.java).apply {
             action = "app.padingo.REMINDER_NOTIFICATION"
             putExtra("note_id", note.id)
             putExtra("note_uuid", note.uuid)
-            putExtra("note_text", note.text)
-            putExtra("note_page_id", note.pageId)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
