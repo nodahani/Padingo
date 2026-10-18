@@ -85,7 +85,7 @@ kotlin {
 }
 
 android {
-    namespace = "app.pentastic"
+    namespace = "app.padingo"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
@@ -116,11 +116,27 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+        // The real release key lives only in CI as secrets (base64-decoded to
+        // $RUNNER_TEMP by the workflow). Without the secrets the config stays
+        // empty and the release APK falls back to unsigned — same as before.
+        create("release") {
+            val ksPath = System.getenv("SIGNING_KEYSTORE_FILE")
+            if (ksPath != null && rootProject.file(ksPath).exists()) {
+                storeFile = rootProject.file(ksPath)
+                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS") ?: "padingo"
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
     }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+            val releaseSigning = signingConfigs.getByName("release")
+            if (releaseSigning.storeFile != null) {
+                signingConfig = releaseSigning
+            }
         }
         getByName("debug") {
             isMinifyEnabled = false
@@ -146,20 +162,20 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "app.pentastic.MainKt"
-        jvmArgs += listOf("-Xdock:name=Pentastic")
+        mainClass = "app.padingo.MainKt"
+        jvmArgs += listOf("-Xdock:name=padingo")
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Pentastic"
+            packageName = "padingo"
             packageVersion = "1.0.0"
             // From suggestRuntimeModules: jdk.unsupported provides sun.misc.Unsafe
             // for the sqlite/datastore stack; absent it the packaged app dies on launch
             modules("java.instrument", "jdk.unsupported")
             macOS {
-                bundleID = "app.pentastic"
-                dockName = "Pentastic"
-                iconFile.set(project.file("icons/Pentastic.icns"))
+                bundleID = "app.padingo"
+                dockName = "padingo"
+                iconFile.set(project.file("icons/padingo.icns"))
             }
         }
     }
