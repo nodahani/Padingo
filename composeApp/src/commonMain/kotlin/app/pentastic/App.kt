@@ -40,11 +40,16 @@ fun App() {
         null -> Unit
         true -> WelcomeScreen(
             onDone = { language, calendar ->
-                showWelcome = false
+                // Write the prefs first and only then dismiss: by the time the
+                // home screen — and with it the first-launch seeding — runs,
+                // the chosen language and calendar are guaranteed stored. The
+                // first-launch flag itself is NOT written here;
+                // MainViewModel.checkFirstLaunch owns it and clears it after
+                // seeding, so this save can never race the seeding check.
                 coroutineScope.launch {
                     dataStoreRepository.saveLanguage(language.ordinal)
                     dataStoreRepository.saveCalendar(calendar.ordinal)
-                    dataStoreRepository.firstLaunchDone()
+                    showWelcome = false
                 }
             }
         )

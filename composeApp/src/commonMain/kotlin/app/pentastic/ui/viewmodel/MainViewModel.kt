@@ -687,112 +687,119 @@ class MainViewModel(
     private fun checkFirstLaunch() {
         viewModelScope.launch {
             if (dataStoreRepository.firstLaunch.first()) {
-                // Pin the choice before firstLaunchDone(), so this install is never briefly
-                // mistaken for an upgrade while the two writes land.
+                // Pin the choice before seeding, so this install is never briefly
+                // mistaken for an upgrade while the writes land.
                 dataStoreRepository.setShowTimeline(true)
                 dataStoreRepository.setFirstLaunchTime(Clock.System.now().toEpochMilliseconds())
-                dataStoreRepository.firstLaunchDone()
 
                 // A missing marker over a populated DB is a lost or relocated
                 // preferences store (e.g. the desktop DataStore moving out of the
-                // temp dir), not a fresh install: don't seed the samples again
-                if (repository.getRootPages().first().isNotEmpty()) return@launch
+                // temp dir), not a fresh install: don't seed the samples again.
+                if (repository.getRootPages().first().isEmpty()) {
 
-                // Seed in the language the user chose on the welcome screen
-                // (the welcome flow writes it before the home screen — and this
-                // seeding — ever runs). Texts are stored content, so later
-                // language changes don't rewrite them.
-                val seed = OnboardingSeedTexts(
-                    AppLanguage.fromOrdinal(dataStoreRepository.languageOnce()) == AppLanguage.FARSI
-                )
+                    // Seed in the language the user chose on the welcome screen
+                    // (the welcome flow writes it before the home screen — and this
+                    // seeding — ever runs). Texts are stored content, so later
+                    // language changes don't rewrite them.
+                    val seed = OnboardingSeedTexts(
+                        AppLanguage.fromOrdinal(dataStoreRepository.languageOnce()) == AppLanguage.FARSI
+                    )
 
-                val pageTodo = repository.insertPage(Page(name = seed.pageTodo))
-                repository.insertNote(
-                    Note(pageId = pageTodo, text = seed.todoInstall, done = true, orderAt = 3L)
-                )
-                repository.insertNote(
-                    Note(pageId = pageTodo, text = seed.todoDoubleTap, orderAt = 2L)
-                )
-                repository.insertNote(
-                    Note(pageId = pageTodo, text = seed.todoSingleTap, orderAt = 1L)
-                )
-                repository.insertNote(
-                    Note(pageId = pageTodo, text = seed.todoSwipe, orderAt = 0L)
-                )
+                    val pageTodo = repository.insertPage(Page(name = seed.pageTodo))
+                    repository.insertNote(
+                        Note(pageId = pageTodo, text = seed.todoInstall, done = true, orderAt = 3L)
+                    )
+                    repository.insertNote(
+                        Note(pageId = pageTodo, text = seed.todoDoubleTap, orderAt = 2L)
+                    )
+                    repository.insertNote(
+                        Note(pageId = pageTodo, text = seed.todoSingleTap, orderAt = 1L)
+                    )
+                    repository.insertNote(
+                        Note(pageId = pageTodo, text = seed.todoSwipe, orderAt = 0L)
+                    )
 
-                val pageReminders = repository.insertPage(Page(name = seed.pageReminders))
-                repository.insertNote(
-                    Note(
-                        pageId = pageReminders,
-                        text = seed.remindersText,
+                    val pageReminders = repository.insertPage(Page(name = seed.pageReminders))
+                    repository.insertNote(
+                        Note(
+                            pageId = pageReminders,
+                            text = seed.remindersText,
+                        )
                     )
-                )
 
-                val pageThings = repository.insertPage(Page(name = seed.pageThings))
-                repository.insertPage(Page(name = seed.pageThingsTodo, parentId = pageThings))
-                repository.insertPage(Page(name = seed.pageThingsRead, parentId = pageThings))
-                repository.insertPage(Page(name = seed.pageThingsWatch, parentId = pageThings))
-                repository.insertNote(
-                    Note(
-                        pageId = pageThings,
-                        text = seed.thingsTextForget,
+                    val pageThings = repository.insertPage(Page(name = seed.pageThings))
+                    repository.insertPage(Page(name = seed.pageThingsTodo, parentId = pageThings))
+                    repository.insertPage(Page(name = seed.pageThingsRead, parentId = pageThings))
+                    repository.insertPage(Page(name = seed.pageThingsWatch, parentId = pageThings))
+                    repository.insertNote(
+                        Note(
+                            pageId = pageThings,
+                            text = seed.thingsTextForget,
+                        )
                     )
-                )
-                repository.insertNote(
-                    Note(
-                        pageId = pageThings,
-                        text = seed.thingsTextIntro,
+                    repository.insertNote(
+                        Note(
+                            pageId = pageThings,
+                            text = seed.thingsTextIntro,
+                        )
                     )
-                )
 
-                val pageNotes = repository.insertPage(Page(name = seed.pageNotes, pageType = PageType.NOTES.ordinal))
-                repository.insertNote(
-                    Note(
-                        pageId = pageNotes,
-                        text = seed.notesTextTimestamps,
+                    val pageNotes = repository.insertPage(Page(name = seed.pageNotes, pageType = PageType.NOTES.ordinal))
+                    repository.insertNote(
+                        Note(
+                            pageId = pageNotes,
+                            text = seed.notesTextTimestamps,
+                        )
                     )
-                )
-                repository.insertNote(
-                    Note(
-                        pageId = pageNotes,
-                        text = seed.notesTextType,
+                    repository.insertNote(
+                        Note(
+                            pageId = pageNotes,
+                            text = seed.notesTextType,
+                        )
                     )
-                )
 
-                val pageIdeas = repository.insertPage(Page(name = seed.pageIdeas, pageType = PageType.NOTES.ordinal))
-                repository.insertNote(
-                    Note(
-                        pageId = pageIdeas,
-                        text = seed.ideasTextScribble,
+                    val pageIdeas = repository.insertPage(Page(name = seed.pageIdeas, pageType = PageType.NOTES.ordinal))
+                    repository.insertNote(
+                        Note(
+                            pageId = pageIdeas,
+                            text = seed.ideasTextScribble,
+                        )
                     )
-                )
-                repository.insertNote(
-                    Note(
-                        pageId = pageIdeas,
-                        text = seed.ideasTextHappy,
+                    repository.insertNote(
+                        Note(
+                            pageId = pageIdeas,
+                            text = seed.ideasTextHappy,
+                        )
                     )
-                )
 
-                val pageDontDo = repository.insertPage(Page(name = seed.pageDontDo))
-                repository.insertNote(
-                    Note(
-                        pageId = pageDontDo,
-                        text = seed.dontDoTextBack,
+                    val pageDontDo = repository.insertPage(Page(name = seed.pageDontDo))
+                    repository.insertNote(
+                        Note(
+                            pageId = pageDontDo,
+                            text = seed.dontDoTextBack,
+                        )
                     )
-                )
-                repository.insertNote(
-                    Note(
-                        pageId = pageDontDo,
-                        text = seed.dontDoTextPriority,
+                    repository.insertNote(
+                        Note(
+                            pageId = pageDontDo,
+                            text = seed.dontDoTextPriority,
+                        )
                     )
-                )
-                repository.insertNote(
-                    Note(
-                        pageId = pageDontDo,
-                        text = seed.dontDoTextOkay,
-                        priority = 1,
+                    repository.insertNote(
+                        Note(
+                            pageId = pageDontDo,
+                            text = seed.dontDoTextOkay,
+                            priority = 1,
+                        )
                     )
-                )
+                }
+
+                // The single owner of the first-launch flag clears it here, only
+                // after seeding finished: the welcome screen no longer writes it,
+                // so its save can never win a race against this check and skip
+                // the samples — and a process death mid-seed retries them on the
+                // next start.
+                dataStoreRepository.firstLaunchDone()
             } else if (!dataStoreRepository.showTimelineChosen.first()) {
                 // Upgraded from a version that shipped without the timeline. Leave it off until
                 // the user enables it from the index row.
