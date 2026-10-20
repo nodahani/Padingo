@@ -195,6 +195,13 @@ fun SettingsScreen(
             onClick = {
                 viewModel.onRateClicked()
                 uriHandler.openUri("https://github.com/nodahani/Padingo")
+            },
+            trailing = {
+                Text(
+                    text = "Padingo",
+                    fontSize = 14.sp,
+                    color = colors.hint,
+                )
             }
         )
 
