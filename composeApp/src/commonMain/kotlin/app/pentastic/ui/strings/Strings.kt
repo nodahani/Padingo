@@ -23,8 +23,9 @@ interface AppStrings {
     val share: String
     val rate: String
     val developer: String
-    val creditsTitle: String
-    val creditsBody: String
+    val creditsBuiltOn: String
+    val creditsBy: String
+    val creditsDevelopedBy: String
     val shareText: String
 
     // Index page
@@ -152,8 +153,9 @@ object EnglishStrings : AppStrings {
     override val developer = "Developer"
     override val shareText =
         "Get things done with Padingo!\nhttps://github.com/nodahani/Padingo"
-    override val creditsTitle = "Made with love, based on Pentastic"
-    override val creditsBody = "Padingo is a Persian edition of Pentastic by Tanuj, developed on top of it. Thanks for the great foundation!"
+    override val creditsBuiltOn = "Built on "
+    override val creditsBy = " by "
+    override val creditsDevelopedBy = " · developed by "
 
     // Index page
     override val index = "Index"
@@ -336,8 +338,9 @@ object FarsiStrings : AppStrings {
     override val developer = "توسعه‌دهنده"
     override val shareText =
         "!با پدینگو کارهات رو انجام بده\nhttps://github.com/nodahani/Padingo"
-    override val creditsTitle = "توسعه یافته با عشق بر پایه‌ی Pentastic"
-    override val creditsBody = "پدینگو فارسی‌سازی و توسعه‌ی Pentastic اثر Tanuj است. ممنون از پایه‌ی عالی‌ش!"
+    override val creditsBuiltOn = "ساخته‌شده بر پایه‌ی "
+    override val creditsBy = " اثر "
+    override val creditsDevelopedBy = " — توسعه‌ی "
 
     // Index page
     override val index = "فهرست"
