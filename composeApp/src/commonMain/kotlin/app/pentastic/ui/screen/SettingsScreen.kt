@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ViewWeek
@@ -172,6 +173,20 @@ fun SettingsScreen(
             title = strings.share,
             onClick = {
                 appSharer.share(strings.shareText)
+            }
+        )
+        SettingsItem(
+            icon = { Icon(Icons.Default.Person, contentDescription = null, tint = colors.icon, modifier = Modifier.size(22.dp)) },
+            title = strings.developer,
+            onClick = {
+                uriHandler.openUri("https://github.com/nodahani")
+            },
+            trailing = {
+                Text(
+                    text = "nodahani",
+                    fontSize = 14.sp,
+                    color = colors.hint,
+                )
             }
         )
         SettingsItem(

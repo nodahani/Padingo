@@ -22,6 +22,7 @@ interface AppStrings {
     val trash: String
     val share: String
     val rate: String
+    val developer: String
     val creditsTitle: String
     val creditsBody: String
     val shareText: String
@@ -148,6 +149,7 @@ object EnglishStrings : AppStrings {
     override val trash = "Trash"
     override val share = "Share"
     override val rate = "Rate"
+    override val developer = "Developer"
     override val shareText =
         "Get things done with Padingo!\nhttps://github.com/nodahani/Padingo"
     override val creditsTitle = "Made with love, based on Pentastic"
@@ -331,6 +333,7 @@ object FarsiStrings : AppStrings {
     override val trash = "سطل زباله"
     override val share = "اشتراک‌گذاری"
     override val rate = "امتیاز دادن"
+    override val developer = "توسعه‌دهنده"
     override val shareText =
         "!با پدینگو کارهات رو انجام بده\nhttps://github.com/nodahani/Padingo"
     override val creditsTitle = "توسعه یافته با عشق بر پایه‌ی Pentastic"
